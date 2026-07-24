@@ -1,4 +1,4 @@
-# Technical Documentation — Personal Finance Dashboard
+# Technical Documentation — Financial Planner
 
 ## 1. Architecture Overview
 

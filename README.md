@@ -1,4 +1,4 @@
-# Personal Finance Dashboard (Οικονομικός Πίνακας Ελέγχου)
+# Financial Planner (Οικονομικός Σχεδιασμός)
 
 A free, bilingual (Greek/English) web dashboard for Greek payroll, loans, and personal budgeting. No sign-up, no backend, no tracking — everything runs client-side in the browser.
 

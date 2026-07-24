@@ -2,9 +2,10 @@
 const TRANSLATIONS = {
   el: {
   "eyebrow1": "ΜΙΣΘΟΣ, ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ & ΔΑΝΕΙΟ",
-  "h1title": "Οικονομικός Πίνακας Ελέγχου",
-  "pageIntro1": "Δωρεάν πίνακας ελέγχου για μισθό (με φορολογική κλίμακα ανά ηλικία), δώρα, προϋπολογισμό, επενδύσεις και δάνειο — όλα συνδεδεμένα σε ένα εργαλείο.",
+  "h1title": "Οικονομικός Σχεδιασμός",
+  "pageIntro1": "Δωρεάν σχεδιασμός των οικονομικών σου — μισθός (με φορολογική κλίμακα ανά ηλικία), δώρα, προϋπολογισμός, επενδύσεις και δάνειο, όλα συνδεδεμένα.",
   "siteFooter1": "Το εργαλείο παρέχεται ενδεικτικά, χωρίς καμία εγγύηση ακρίβειας — δεν αποτελεί φορολογική, νομική ή χρηματοοικονομική συμβουλή. Για αποφάσεις που σας δεσμεύουν, συμβουλευτείτε αρμόδιο επαγγελματία (λογιστή, μισθοδοσία, τραπεζικό σύμβουλο).",
+  "footerIssuesLink": "Σχόλια / Issues",
   "startHint1": "\u2192 Ξεκίνα από το tab «Μισθός & Δώρα» για να υπολογίσεις πρώτα το καθαρό σου εισόδημα.",
   "introT1": "Μισθός & Δώρα",
   "introD1": " — καθαρός μισθός, φόρος ανά ηλικία, δώρα Χριστουγέννων/Πάσχα, επίδομα αδείας.",
@@ -221,9 +222,10 @@ const TRANSLATIONS = {
 },
   en: {
   "eyebrow1": "SALARY, BUDGET & LOAN",
-  "h1title": "Personal Finance Dashboard",
-  "pageIntro1": "A free dashboard for salary (with the age-based tax scale), bonuses, budget, investments, and loans \u2014 all connected in one tool.",
+  "h1title": "Financial Planner",
+  "pageIntro1": "Free financial planning for your salary (with the age-based tax scale), bonuses, budget, investments, and loans \u2014 all connected.",
   "siteFooter1": "This tool is provided for indicative purposes only, with no guarantee of accuracy \u2014 it does not constitute tax, legal, or financial advice. For decisions that commit you, consult a qualified professional (accountant, payroll manager, or bank advisor).",
+  "footerIssuesLink": "Feedback / Issues",
   "startHint1": "\u2192 Start with the \u00abSalary & Bonuses\u00bb tab to work out your net income first.",
   "introT1": "Salary & Bonuses",
   "introD1": " \u2014 net salary, age-based tax, Christmas/Easter bonuses, leave allowance.",
@@ -456,7 +458,7 @@ function applyStaticTranslations(){
     if(dict[key] !== undefined) el.setAttribute('aria-label', dict[key]);
   });
   document.documentElement.lang = currentLang;
-  document.title = currentLang === 'en' ? 'Personal Finance Dashboard — Net Salary, Loan & Budget Calculator' : 'Οικονομικός Πίνακας Ελέγχου — Υπολογισμός Καθαρού Μισθού, Δανείου & Προϋπολογισμού';
+  document.title = currentLang === 'en' ? 'Financial Planner — Net Salary, Loan & Budget Calculator' : 'Οικονομικός Σχεδιασμός — Υπολογισμός Καθαρού Μισθού, Δανείου & Προϋπολογισμού';
   const toggleBtn = document.getElementById('langToggleBtn');
   if(toggleBtn) toggleBtn.textContent = currentLang === 'el' ? '\uD83C\uDF10 EN' : '\uD83C\uDF10 EL';
 }
@@ -1492,7 +1494,7 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
   const hasLoan = parseFloat(val('amount')) > 0;
 
   let html = `
-    <h1>${pt('Οικονομικός Πίνακας Ελέγχου — Αναφορά','Personal Finance Dashboard — Report')}</h1>
+    <h1>${pt('Οικονομικός Σχεδιασμός — Αναφορά','Financial Planner — Report')}</h1>
     <div class="print-date">${new Date().toLocaleDateString(currentLang==='en' ? 'en-GB' : 'el-GR')}</div>
 
     <h2>${pt('Μισθός & Δώρα','Salary & Bonuses')}</h2>
