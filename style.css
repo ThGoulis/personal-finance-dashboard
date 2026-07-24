@@ -472,6 +472,16 @@ input[type=range]{
   text-align:center;
   opacity:0.85;
 }
+.site-signature{
+  margin-top:8px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+}
+.site-signature a{
+  color:var(--teal);
+  text-decoration:underline;
+}
+.site-signature a:hover{ color:var(--teal-deep); }
 .table-wrap{
   max-height:340px;
   overflow-y:auto;
