@@ -190,6 +190,28 @@ h1{
   margin-bottom:6px;
   font-weight:500;
 }
+.info-icon{
+  display:inline-block;
+  color:var(--teal);
+  cursor:pointer;
+  font-size:13px;
+  margin-left:4px;
+  user-select:none;
+}
+.info-icon:hover, .info-icon:focus{ color:var(--teal-deep); outline:none; }
+.info-popover{
+  display:none;
+  background:var(--card);
+  border:1px solid var(--brass);
+  border-radius:6px;
+  padding:10px 12px;
+  font-size:11.5px;
+  font-weight:400;
+  color:var(--ink-soft);
+  line-height:1.4;
+  margin:6px 0 10px;
+}
+.info-popover.open{ display:block; }
 .field .row{ display:flex; align-items:center; gap:10px; }
 input[type=number], input[type=range]{
   width:100%;

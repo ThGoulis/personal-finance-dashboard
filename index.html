@@ -315,9 +315,18 @@
   <div id="tabSalary" style="display:none;">
 
     <div class="card" style="margin-bottom:22px;">
-      <h2 data-i18n="h237"><span class="num">1</span> Μισθός & Δώρα <span style="font-weight:400;font-size:11px;color:var(--ink-soft);">(σύστημα 14 μισθών)</span></h2>
+      <h2 data-i18n="h237"><span class="num">1</span> Μισθός & Δώρα <span style="font-weight:400;font-size:11px;color:var(--ink-soft);" id="salaryTypeSuffix">(σύστημα 14 μισθών)</span></h2>
+      <div class="field" style="margin-bottom:18px;">
+        <label for="employmentType" data-i18n="lblEmploymentType">Καθεστώς Απασχόλησης</label>
+        <select id="employmentType" class="date-input" style="width:100%;">
+          <option value="salaried14" selected data-i18n="empType14">Μισθωτός (14 μισθοί)</option>
+          <option value="salaried12" data-i18n="empType12">Μισθωτός (12 μισθοί)</option>
+          <option value="freelancer" data-i18n="empTypeFreelancer">Ελεύθερος Επαγγελματίας</option>
+        </select>
+      </div>
       <div class="grid" style="margin-top:4px;">
         <div>
+          <div id="salariedOnlyFields">
           <div class="field">
             <label for="grossSalary" data-i18n="lbl9">Μικτός μηνιαίος μισθός (τακτικός)</label>
             <div class="row">
@@ -326,7 +335,7 @@
             </div>
           </div>
 
-          <div class="field">
+          <div class="field" id="hireDateField">
             <label for="hireDate" data-i18n="lbl10">Ημερομηνία πρόσληψης</label>
             <div class="date-wrap">
               <input type="text" id="hireDate" class="date-input" value="01/01/2020" placeholder="ηη/μμ/εεεε" data-i18n-ph="hireDatePh" inputmode="numeric" maxlength="10">
@@ -338,6 +347,20 @@
               </svg>
               <input type="date" id="hireDatePicker" value="2020-01-01" aria-label="Επιλογή ημερομηνίας από ημερολόγιο">
             </div>
+          </div>
+
+          <div class="field">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <label for="ssCategory" data-i18n="lblSsCategory" style="margin-bottom:0;">Ασφαλιστική Κατηγορία</label>
+              <span class="info-icon" tabindex="0" role="button" aria-label="Πληροφορίες" data-i18n-aria="ariaInfo" data-popover="ssCategoryInfo">ⓘ</span>
+            </div>
+            <div class="info-popover" id="ssCategoryInfo" data-i18n="ssCategoryInfoText">Οι επιλογές αφορούν πρόσθετες εισφορές πάνω στο βασικό ποσοστό, όπως ισχύουν σήμερα για μισθωτούς ιδιωτικού τομέα (Υπουργείο Εργασίας). Αν δεν είστε σίγουροι για την κατηγορία σας, επιλέξτε "Τυπικός εργαζόμενος" ή συμβουλευτείτε τον υπεύθυνο μισθοδοσίας σας.</div>
+            <select id="ssCategory" class="date-input" style="width:100%;">
+              <option value="13.37" selected data-i18n="ssCat1">Τυπικός εργαζόμενος (13,37%)</option>
+              <option value="15.57" data-i18n="ssCat2">Βαρέα & Ανθυγιεινά Επαγγέλματα — ΚΒΑΕ (15,57%)</option>
+              <option value="17.67" data-i18n="ssCat3">Υπόγειες/υποθαλάσσιες εργασίες (17,67%)</option>
+              <option value="" data-i18n="ssCat4">Προσαρμογή χειροκίνητα</option>
+            </select>
           </div>
 
           <div class="field">
@@ -365,6 +388,7 @@
             </select>
           </div>
 
+          <div id="extraHoursFields">
           <div class="field">
             <label for="overworkHours" data-i18n="lbl14">Ώρες υπερεργασίας <span style="font-weight:400;">(μηνιαίες, +20%)</span></label>
             <div class="row">
@@ -396,10 +420,39 @@
               <span class="unit" data-i18n="unit111">€</span>
             </div>
           </div>
+          </div>
+          </div>
+
+          <div id="freelancerOnlyFields" style="display:none;">
+            <div class="field">
+              <label for="freelancerProfit" data-i18n="lblFreelancerProfit">Μέσο μηνιαίο καθαρό κέρδος <span style="font-weight:400;">(έσοδα μείον επαγγελματικά έξοδα)</span></label>
+              <div class="row">
+                <input type="number" id="freelancerProfit" value="1200" min="0" step="10">
+                <span class="unit" data-i18n="unit112">€</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                <label for="freelancerCategory" data-i18n="lblFreelancerCategory" style="margin-bottom:0;">Ασφαλιστική Κατηγορία ΕΦΚΑ</label>
+                <span class="info-icon" tabindex="0" role="button" aria-label="Πληροφορίες" data-i18n-aria="ariaInfo" data-popover="freelancerCategoryInfo">ⓘ</span>
+              </div>
+              <div class="info-popover" id="freelancerCategoryInfo" data-i18n="freelancerCategoryInfoText">Οι ελεύθεροι επαγγελματίες πληρώνουν ΕΦΚΑ ως σταθερό μηνιαίο ποσό ανά κατηγορία (όχι ποσοστό επί εισοδήματος), βάσει της επιλογής σας. Αν δεν επιλέξετε κατηγορία, ισχύει αυτόματα η 1η. Πηγή: Υπουργείο Εργασίας, τιμές 2026.</div>
+              <select id="freelancerCategory" class="date-input" style="width:100%;">
+                <option value="185.09" selected data-i18n="fcat1">1η Κατηγορία (185,09€/μήνα)</option>
+                <option value="222.12" data-i18n="fcat2">2η Κατηγορία (222,12€/μήνα)</option>
+                <option value="281.82" data-i18n="fcat3">3η Κατηγορία (281,82€/μήνα)</option>
+                <option value="354.66" data-i18n="fcat4">4η Κατηγορία (354,66€/μήνα)</option>
+                <option value="440.64" data-i18n="fcat5">5η Κατηγορία (440,64€/μήνα)</option>
+                <option value="597.06" data-i18n="fcat6">6η Κατηγορία (597,06€/μήνα)</option>
+                <option value="111.06" data-i18n="fcat7">Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div>
-          <div class="results" style="grid-template-columns:1fr;">
+          <div class="results" style="grid-template-columns:1fr;" id="salariedResults">
             <div class="result-box">
               <div class="label" data-i18n="reslbl71">Μικτός μηνιαίος μισθός</div>
               <div class="value" id="sGross">—</div>
@@ -430,7 +483,39 @@
             </div>
           </div>
 
-          <div class="table-wrap" style="max-height:none;">
+          <div class="results" style="grid-template-columns:1fr; display:none;" id="freelancerResults">
+            <div class="result-box">
+              <div class="label" data-i18n="freslbl1">Ετήσιο καθαρό κέρδος</div>
+              <div class="value" id="fpAnnualProfit">—</div>
+            </div>
+            <div class="result-box deduction">
+              <div class="label" data-i18n="freslbl2">ΕΦΚΑ <span style="font-weight:400;">(σταθερό/μήνα)</span></div>
+              <div class="value" id="fpEfkaMonthly">—</div>
+            </div>
+            <div class="result-box">
+              <div class="label" data-i18n="freslbl3">Φορολογητέο εισόδημα <span style="font-weight:400;">(ετήσιο, μετά ΕΦΚΑ)</span></div>
+              <div class="value" id="fpTaxable">—</div>
+            </div>
+            <div class="result-box deduction">
+              <div class="label" data-i18n="freslbl4">Αρχικός φόρος κλίμακας</div>
+              <div class="value" id="fpGrossTax">—</div>
+            </div>
+            <div class="result-box deduction">
+              <div class="label" data-i18n="freslbl5">Μείωση φόρου</div>
+              <div class="value" id="fpCredit">—</div>
+            </div>
+            <div class="result-box deduction">
+              <div class="label" data-i18n="freslbl6">Τελικός ετήσιος φόρος</div>
+              <div class="value" id="fpFinalTax">—</div>
+            </div>
+            <div class="result-box big">
+              <div class="label" data-i18n="freslbl7">Καθαρό μηνιαίο εισόδημα</div>
+              <div class="value" id="fpNetMonthly">—</div>
+            </div>
+          </div>
+          <div class="note" id="freelancerNote" data-i18n="freelancerNoteText" style="display:none;"><p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, "μπλοκάκι", αναπηρία 80%+), ή ΦΠΑ. Επιπλέον, τον επόμενο χρόνο συνήθως θα χρειαστεί να καταβάλετε προκαταβολή φόρου (τυπικά ένα μεγάλο ποσοστό του φετινού φόρου, μειωμένο τα πρώτα χρόνια δραστηριότητας) — συμβουλευτείτε λογιστή για το ακριβές ποσοστό στην περίπτωσή σας.</p></div>
+
+          <div class="table-wrap" style="max-height:none;" id="bonusTableWrap">
           <table class="amort-table" style="margin-top:14px;">
             <thead><tr><th data-i18n="th131">Παροχή (φετινή περίοδος)</th><th data-i18n="th132">Μικτό</th><th data-i18n="th133">Καθαρό</th></tr></thead>
             <tbody>
@@ -441,9 +526,9 @@
           </table>
           </div>
 
-          <div class="table-wrap" style="max-height:none;">
+          <div class="table-wrap" style="max-height:none;" id="annualTableWrap">
           <table class="amort-table" style="margin-top:14px;">
-            <thead><tr><th data-i18n="th134">Ετήσια εικόνα (14 μισθοί)</th><th colspan="2" data-i18n="th135">Ποσό</th></tr></thead>
+            <thead><tr><th data-i18n="th134" id="annualPictureHeader">Ετήσια εικόνα (14 μισθοί)</th><th colspan="2" data-i18n="th135">Ποσό</th></tr></thead>
             <tbody>
               <tr><td data-i18n="tdlbl1">Συνολικό φορολογητέο εισόδημα</td><td colspan="2" id="sAnnualTaxable">—</td></tr>
               <tr><td data-i18n="tdlbl2">Αρχικός φόρος κλίμακας</td><td colspan="2" id="sGrossTax">—</td></tr>

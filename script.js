@@ -82,10 +82,40 @@ const TRANSLATIONS = {
   "rowlbl5": "Υπόλοιπες δόσεις",
   "rowlbl6": "Τόκοι υπολοίπου διάρκειας",
   "note92": "Η προσομοίωση υπολογίζει το ανεξόφλητο κεφάλαιο τον μήνα εφαρμογής, αφαιρεί το ποσό της έκτακτης καταβολής και είτε διατηρεί σταθερή τη δόση (μειώνοντας τη διάρκεια) είτε διατηρεί σταθερή την υπόλοιπη διάρκεια (μειώνοντας τη δόση). Οι υπολογισμοί είναι ενδεικτικοί — δεν λαμβάνουν υπόψη έξοδα, ασφάλιστρα ή ενδεχόμενες προμήθειες πρόωρης αποπληρωμής.",
-  "h237": "<span class=\"num\">1</span> Μισθός & Δώρα <span style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(σύστημα 14 μισθών)</span>",
+  "h237": "<span class=\"num\">1</span> Μισθός & Δώρα <span id=\"salaryTypeSuffix\" style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(σύστημα 14 μισθών)</span>",
   "lbl9": "Μικτός μηνιαίος μισθός (τακτικός)",
+  "lblEmploymentType": "Καθεστώς Απασχόλησης",
+  "empType14": "Μισθωτός (14 μισθοί)",
+  "empType12": "Μισθωτός (12 μισθοί)",
+  "empTypeFreelancer": "Ελεύθερος Επαγγελματίας",
+  "lblFreelancerProfit": "Μέσο μηνιαίο καθαρό κέρδος <span style=\"font-weight:400;\">(έσοδα μείον επαγγελματικά έξοδα)</span>",
+  "unit112": "€",
+  "lblFreelancerCategory": "Ασφαλιστική Κατηγορία ΕΦΚΑ",
+  "freelancerCategoryInfoText": "Οι ελεύθεροι επαγγελματίες πληρώνουν ΕΦΚΑ ως σταθερό μηνιαίο ποσό ανά κατηγορία (όχι ποσοστό επί εισοδήματος), βάσει της επιλογής σας. Αν δεν επιλέξετε κατηγορία, ισχύει αυτόματα η 1η. Πηγή: Υπουργείο Εργασίας, τιμές 2026.",
+  "fcat1": "1η Κατηγορία (185,09€/μήνα)",
+  "fcat2": "2η Κατηγορία (222,12€/μήνα)",
+  "fcat3": "3η Κατηγορία (281,82€/μήνα)",
+  "fcat4": "4η Κατηγορία (354,66€/μήνα)",
+  "fcat5": "5η Κατηγορία (440,64€/μήνα)",
+  "fcat6": "6η Κατηγορία (597,06€/μήνα)",
+  "fcat7": "Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)",
+  "freslbl1": "Ετήσιο καθαρό κέρδος",
+  "freslbl2": "ΕΦΚΑ <span style=\"font-weight:400;\">(σταθερό/μήνα)</span>",
+  "freslbl3": "Φορολογητέο εισόδημα <span style=\"font-weight:400;\">(ετήσιο, μετά ΕΦΚΑ)</span>",
+  "freslbl4": "Αρχικός φόρος κλίμακας",
+  "freslbl5": "Μείωση φόρου",
+  "freslbl6": "Τελικός ετήσιος φόρος",
+  "freslbl7": "Καθαρό μηνιαίο εισόδημα",
+  "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, \"μπλοκάκι\", αναπηρία 80%+), ή ΦΠΑ. Επιπλέον, τον επόμενο χρόνο συνήθως θα χρειαστεί να καταβάλετε προκαταβολή φόρου (τυπικά ένα μεγάλο ποσοστό του φετινού φόρου, μειωμένο τα πρώτα χρόνια δραστηριότητας) — συμβουλευτείτε λογιστή για το ακριβές ποσοστό στην περίπτωσή σας.</p>",
   "unit105": "€",
   "lbl10": "Ημερομηνία πρόσληψης",
+  "lblSsCategory": "Ασφαλιστική Κατηγορία",
+  "ariaInfo": "Πληροφορίες",
+  "ssCategoryInfoText": "Οι επιλογές αφορούν πρόσθετες εισφορές πάνω στο βασικό ποσοστό, όπως ισχύουν σήμερα για μισθωτούς ιδιωτικού τομέα (Υπουργείο Εργασίας). Αν δεν είστε σίγουροι για την κατηγορία σας, επιλέξτε \"Τυπικός εργαζόμενος\" ή συμβουλευτείτε τον υπεύθυνο μισθοδοσίας σας.",
+  "ssCat1": "Τυπικός εργαζόμενος (13,37%)",
+  "ssCat2": "Βαρέα & Ανθυγιεινά Επαγγέλματα — ΚΒΑΕ (15,57%)",
+  "ssCat3": "Υπόγειες/υποθαλάσσιες εργασίες (17,67%)",
+  "ssCat4": "Προσαρμογή χειροκίνητα",
   "lbl11": "Ασφαλιστικές κρατήσεις εργαζομένου",
   "unit106": "%",
   "lbl12": "Βασική ετήσια μείωση φόρου <span style=\"font-weight:400;\">(777€ χωρίς τέκνα — προσαρμόστε βάσει τέκνων, μειώνεται αυτόματα με το εισόδημα)</span>",
@@ -269,10 +299,40 @@ const TRANSLATIONS = {
   "rowlbl5": "Remaining Installments",
   "rowlbl6": "Interest over Remaining Term",
   "note92": "The simulation calculates the outstanding principal in the month the payment is applied, subtracts the extra payment amount, and either keeps the payment fixed (shortening the term) or keeps the remaining term fixed (lowering the payment). The figures are indicative -- they do not account for fees, insurance, or possible early-repayment charges.",
-  "h237": "<span class=\"num\">1</span> Salary & Bonuses <span style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(14-payment system)</span>",
+  "h237": "<span class=\"num\">1</span> Salary & Bonuses <span id=\"salaryTypeSuffix\" style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(14-payment system)</span>",
   "lbl9": "Gross Monthly Salary (Regular)",
+  "lblEmploymentType": "Employment Type",
+  "empType14": "Salaried (14 payments)",
+  "empType12": "Salaried (12 payments)",
+  "empTypeFreelancer": "Self-Employed / Freelancer",
+  "lblFreelancerProfit": "Average monthly net profit <span style=\"font-weight:400;\">(revenue minus business expenses)</span>",
+  "unit112": "€",
+  "lblFreelancerCategory": "EFKA Insurance Category",
+  "freelancerCategoryInfoText": "Self-employed workers pay EFKA as a fixed monthly amount per category (not a percentage of income), based on your selection. If you don't select a category, the 1st applies by default. Source: Ministry of Labour, 2026 amounts.",
+  "fcat1": "Category 1 (€185.09/month)",
+  "fcat2": "Category 2 (€222.12/month)",
+  "fcat3": "Category 3 (€281.82/month)",
+  "fcat4": "Category 4 (€354.66/month)",
+  "fcat5": "Category 5 (€440.64/month)",
+  "fcat6": "Category 6 (€597.06/month)",
+  "fcat7": "Special — new professionals, first 5 years (€111.06/month)",
+  "freslbl1": "Annual Net Profit",
+  "freslbl2": "EFKA <span style=\"font-weight:400;\">(fixed/month)</span>",
+  "freslbl3": "Taxable Income <span style=\"font-weight:400;\">(annual, after EFKA)</span>",
+  "freslbl4": "Initial Bracket Tax",
+  "freslbl5": "Tax Credit",
+  "freslbl6": "Final Annual Tax",
+  "freslbl7": "Net Monthly Income",
+  "freelancerNoteText": "<p>Indicative calculation only. <strong>Does not include:</strong> presumptive/imputed minimum income, special exemptions (e.g. taxi drivers, small settlements, \"blokaki\" contractors, 80%+ disability), or VAT. Additionally, next year you will typically need to pay an advance tax installment (usually a large share of this year's tax, reduced in the first years of activity) — consult an accountant for the exact rate in your case.</p>",
   "unit105": "€",
   "lbl10": "Hire Date",
+  "lblSsCategory": "Insurance Category",
+  "ariaInfo": "Info",
+  "ssCategoryInfoText": "These options add extra contributions on top of the base rate, as currently in effect for private-sector employees (Ministry of Labour). If you're not sure which category applies to you, pick \"Standard employee\" or check with your payroll department.",
+  "ssCat1": "Standard employee (13.37%)",
+  "ssCat2": "Heavy & Unhealthy Occupations \u2014 KBAE (15.57%)",
+  "ssCat3": "Underground/Underwater Work (17.67%)",
+  "ssCat4": "Adjust manually",
   "lbl11": "Employee Social Security Contributions",
   "unit106": "%",
   "lbl12": "Base Annual Tax Credit <span style=\"font-weight:400;\">(EUR777 with no children -- adjust based on children, tapers automatically with income)</span>",
@@ -1119,15 +1179,16 @@ function effectiveTaxCredit(baseCredit, annualTaxable){
   return Math.max(r2(baseCredit - reduction), 0);
 }
 
-function netFromGross(gross, ssRatePct, baseTaxCredit, ageBracket, ssBase){
+function netFromGross(gross, ssRatePct, baseTaxCredit, ageBracket, ssBase, numPayments){
   if(ssBase === undefined) ssBase = gross;
+  if(numPayments === undefined) numPayments = 14;
   const ss = r2(ssBase * (ssRatePct/100));
   const taxable = Math.max(r2(gross - ss), 0);
-  const annualTaxable = r2(taxable * 14);
+  const annualTaxable = r2(taxable * numPayments);
   const grossAnnualTax = annualTax(annualTaxable, ageBracket);
   const usedCredit = effectiveTaxCredit(baseTaxCredit, annualTaxable);
   const annualTaxAfterCredit = Math.max(r2(grossAnnualTax - usedCredit), 0);
-  const monthlyTax = r2(annualTaxAfterCredit/14);
+  const monthlyTax = r2(annualTaxAfterCredit/numPayments);
   return {
     net: Math.max(r2(gross - ss - monthlyTax), 0),
     ss, taxable, annualTaxable, grossAnnualTax, usedCredit, annualTaxAfterCredit, monthlyTax
@@ -1140,10 +1201,82 @@ function recomputeSalary(){
   const taxCredit = parseFloat(document.getElementById('taxCredit').value)||0;
   const extraNet = parseFloat(document.getElementById('extraNet').value)||0;
   const ageBracket = document.getElementById('ageBracket').value;
+  const employmentType = document.getElementById('employmentType').value;
+  const is12 = employmentType === 'salaried12';
+  const isFreelancer = employmentType === 'freelancer';
+  const numPayments = is12 ? 12 : 14;
   const hireDateVal = document.getElementById('hireDate').value;
   const hireDate = parseGreekDate(hireDateVal) || new Date();
 
-  const calc = netFromGross(gross, ssRate, taxCredit, ageBracket);
+  // --- Show/hide sections depending on employment type ---
+  document.getElementById('salariedOnlyFields').style.display = isFreelancer ? 'none' : 'block';
+  document.getElementById('freelancerOnlyFields').style.display = isFreelancer ? 'block' : 'none';
+  document.getElementById('salariedResults').style.display = isFreelancer ? 'none' : 'grid';
+  document.getElementById('freelancerResults').style.display = isFreelancer ? 'grid' : 'none';
+  document.getElementById('annualTableWrap').style.display = isFreelancer ? 'none' : 'block';
+  document.getElementById('freelancerNote').style.display = isFreelancer ? 'block' : 'none';
+  document.getElementById('incomeBanner').style.display = isFreelancer ? 'none' : 'block';
+  // A 12-salary employee has no Christmas/Easter/leave-allowance bonuses, so the
+  // hire date (only used for bonus proration) and the bonus table are irrelevant.
+  // Same applies trivially to freelancers (no such bonuses exist for them either).
+  document.getElementById('hireDateField').style.display = is12 ? 'none' : 'block';
+  document.getElementById('bonusTableWrap').style.display = (is12||isFreelancer) ? 'none' : 'block';
+  document.getElementById('salaryTypeSuffix').textContent = isFreelancer
+    ? (currentLang==='en' ? '(self-employed)' : '(ελεύθερος επαγγελματίας)')
+    : is12
+      ? (currentLang==='en' ? '(12-salary system)' : '(σύστημα 12 μισθών)')
+      : (currentLang==='en' ? '(14-salary system)' : '(σύστημα 14 μισθών)');
+
+  if(isFreelancer){
+    // --- Self-employed / freelancer: v1 scope ---
+    // EFKA is a fixed monthly amount per category (not a percentage of income),
+    // deductible from taxable profit. Tax uses the same bracket scale and the
+    // same tax credit mechanism as employees (extended to the self-employed for
+    // the first time from 2026), but WITHOUT any x12/x14 annualization -- the
+    // annual net profit already IS the annual taxable base.
+    // Explicitly NOT modeled (see the note on screen): presumptive/imputed
+    // minimum income ("τεκμαρτό"), special-category exemptions, VAT, and the
+    // exact advance-tax-payment percentage for next year.
+    const freelancerProfit = parseFloat(document.getElementById('freelancerProfit').value)||0;
+    const freelancerCategoryRate = parseFloat(document.getElementById('freelancerCategory').value)||185.09;
+
+    const annualProfit = r2(freelancerProfit*12);
+    const annualEfka = r2(freelancerCategoryRate*12);
+    const taxableIncome = Math.max(r2(annualProfit-annualEfka),0);
+    const grossTax = annualTax(taxableIncome, ageBracket);
+    const usedCredit = effectiveTaxCredit(taxCredit, taxableIncome);
+    const finalTax = Math.max(r2(grossTax-usedCredit),0);
+    const netMonthly = Math.max(r2(freelancerProfit - freelancerCategoryRate - finalTax/12),0);
+
+    document.getElementById('fpAnnualProfit').textContent = euroDec(annualProfit);
+    document.getElementById('fpEfkaMonthly').textContent = '-' + euroDec(freelancerCategoryRate);
+    document.getElementById('fpTaxable').textContent = euroDec(taxableIncome);
+    document.getElementById('fpGrossTax').textContent = '-' + euroDec(grossTax);
+    document.getElementById('fpCredit').textContent = '+' + euroDec(usedCredit);
+    document.getElementById('fpFinalTax').textContent = '-' + euroDec(finalTax);
+    document.getElementById('fpNetMonthly').textContent = euroDec(netMonthly);
+
+    lastNetSalary = netMonthly;
+    lastAvgBonusEquiv = 0;
+    lastExtraNet = 0;
+    lastXmasNet = 0;
+    lastEasterNet = 0;
+    lastLeaveNet = 0;
+    if(typeof updateDtiIndicator === 'function') updateDtiIndicator();
+
+    const incomeField = document.getElementById('income');
+    if(incomeField.dataset.touched !== 'true'){
+      incomeField.value = netMonthly.toFixed(2);
+    }
+    recomputeBudget();
+    return;
+  }
+
+  document.getElementById('annualPictureHeader').textContent = is12
+    ? (currentLang==='en' ? 'Annual picture (12 payments)' : 'Ετήσια εικόνα (12 μισθοί)')
+    : (currentLang==='en' ? 'Annual picture (14 payments)' : 'Ετήσια εικόνα (14 μισθοί)');
+
+  const calc = netFromGross(gross, ssRate, taxCredit, ageBracket, undefined, numPayments);
   const net = calc.net;
   const netRatio = gross > 0 ? net/gross : 0;
 
@@ -1162,7 +1295,7 @@ function recomputeSalary(){
   const hourlyWage = gross/25/6.667;
   const extraGross = overworkHours*hourlyWage*1.20 + holidayHours*hourlyWage*0.75 + overtimeHours*hourlyWage*1.40;
 
-  const combinedCalc = netFromGross(gross + extraGross, ssRate, taxCredit, ageBracket, gross);
+  const combinedCalc = netFromGross(gross + extraGross, ssRate, taxCredit, ageBracket, gross, numPayments);
   const extraPayNet = r2(combinedCalc.net - net);
   const netTotal = combinedCalc.net;
 
@@ -1175,9 +1308,9 @@ function recomputeSalary(){
   const easterStart = new Date(year,0,1), easterEnd = new Date(year,3,30);
   const leaveStart = new Date(year,4,1), leaveEnd = new Date(year,11,31);
 
-  const xmasGross = proportionalBonus(hireDate, xmasStart, xmasEnd, gross);
-  const easterGross = proportionalBonus(hireDate, easterStart, easterEnd, gross/2);
-  const leaveGross = proportionalBonus(hireDate, leaveStart, leaveEnd, gross/2);
+  const xmasGross = is12 ? 0 : proportionalBonus(hireDate, xmasStart, xmasEnd, gross);
+  const easterGross = is12 ? 0 : proportionalBonus(hireDate, easterStart, easterEnd, gross/2);
+  const leaveGross = is12 ? 0 : proportionalBonus(hireDate, leaveStart, leaveEnd, gross/2);
 
   const xmasNet = xmasGross*netRatio;
   const easterNet = easterGross*netRatio;
@@ -1195,14 +1328,16 @@ function recomputeSalary(){
   document.getElementById('sFinalTax').textContent = euroDec(calc.annualTaxAfterCredit);
   document.getElementById('sEReceipts').textContent = euroDec(calc.annualTaxable*0.30);
 
-  document.getElementById('xmasGross').textContent = euroDec(xmasGross);
-  document.getElementById('xmasNet').textContent = euroDec(xmasNet);
-  document.getElementById('easterGross').textContent = euroDec(easterGross);
-  document.getElementById('easterNet').textContent = euroDec(easterNet);
-  document.getElementById('leaveGross').textContent = euroDec(leaveGross);
-  document.getElementById('leaveNet').textContent = euroDec(leaveNet);
+  if(!is12){
+    document.getElementById('xmasGross').textContent = euroDec(xmasGross);
+    document.getElementById('xmasNet').textContent = euroDec(xmasNet);
+    document.getElementById('easterGross').textContent = euroDec(easterGross);
+    document.getElementById('easterNet').textContent = euroDec(easterNet);
+    document.getElementById('leaveGross').textContent = euroDec(leaveGross);
+    document.getElementById('leaveNet').textContent = euroDec(leaveNet);
+  }
 
-  const avgBonusEquiv = (xmasNet+easterNet+leaveNet)/12;
+  const avgBonusEquiv = is12 ? 0 : (xmasNet+easterNet+leaveNet)/12;
   const estimatedIncome = net + avgBonusEquiv + extraNet;
 
   lastNetSalary = netTotal;
@@ -1213,9 +1348,13 @@ function recomputeSalary(){
   lastLeaveNet = leaveNet;
   if(typeof updateDtiIndicator === 'function') updateDtiIndicator();
 
-  document.getElementById('incomeBanner').textContent = currentLang==='en'
-    ? `Estimated net monthly income (salary + bonus average + extra): ${euroDec(estimatedIncome)}`
-    : `Εκτιμώμενο μηνιαίο καθαρό εισόδημα (μισθός + μέσος όρος δώρων + έξτρα): ${euroDec(estimatedIncome)}`;
+  document.getElementById('incomeBanner').textContent = is12
+    ? (currentLang==='en'
+        ? `Estimated net monthly income (salary + extra): ${euroDec(net+extraNet)}`
+        : `Εκτιμώμενο μηνιαίο καθαρό εισόδημα (μισθός + έξτρα): ${euroDec(net+extraNet)}`)
+    : (currentLang==='en'
+        ? `Estimated net monthly income (salary + bonus average + extra): ${euroDec(estimatedIncome)}`
+        : `Εκτιμώμενο μηνιαίο καθαρό εισόδημα (μισθός + μέσος όρος δώρων + έξτρα): ${euroDec(estimatedIncome)}`);
 
   const incomeField = document.getElementById('income');
   if(incomeField.dataset.touched !== 'true'){
@@ -1225,10 +1364,12 @@ function recomputeSalary(){
 }
 
 document.getElementById('income').addEventListener('input', function(){ this.dataset.touched = 'true'; });
-['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket'].forEach(id=>{
+['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket','employmentType','freelancerProfit','freelancerCategory'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recomputeSalary);
 });
 document.getElementById('ageBracket').addEventListener('change', recomputeSalary);
+document.getElementById('employmentType').addEventListener('change', recomputeSalary);
+document.getElementById('freelancerCategory').addEventListener('change', recomputeSalary);
 
 // --- Investment calculator ---
 function recomputeInvestment(){
@@ -1416,6 +1557,35 @@ document.getElementById('langToggleBtn').addEventListener('click', ()=>{
   setLanguage(currentLang === 'el' ? 'en' : 'el');
 });
 loadSavedLanguage();
+
+// --- Reusable info-icon / popover pattern ---
+document.addEventListener('click', (e)=>{
+  const icon = e.target.closest('.info-icon');
+  document.querySelectorAll('.info-popover.open').forEach(p=>{
+    if(!icon || p.id !== icon.dataset.popover) p.classList.remove('open');
+  });
+  if(icon){
+    const popover = document.getElementById(icon.dataset.popover);
+    if(popover) popover.classList.toggle('open');
+  }
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const icon = e.target.closest && e.target.closest('.info-icon');
+  if(icon){
+    e.preventDefault();
+    const popover = document.getElementById(icon.dataset.popover);
+    if(popover) popover.classList.toggle('open');
+  }
+});
+
+// --- Insurance category dropdown: auto-fills the EFKA % field, still editable manually after ---
+document.getElementById('ssCategory').addEventListener('change', function(){
+  if(this.value !== ''){
+    document.getElementById('ssRate').value = this.value;
+    recomputeSalary();
+  }
+});
 
 // --- Input validation / clamping ---
 // HTML min/max attributes only affect the spinner arrows, not manually typed
