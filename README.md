@@ -1,17 +1,33 @@
 # Personal Finance Dashboard (Οικονομικός Πίνακας Ελέγχου)
 
-A free, single-file, bilingual (Greek/English) web calculator for Greek payroll, loans, and personal budgeting. No sign-up, no backend, no tracking — everything runs client-side in the browser.
+A free, bilingual (Greek/English) web dashboard for Greek payroll, loans, and personal budgeting. No sign-up, no backend, no tracking — everything runs client-side in the browser.
 
 **Live site:** https://thgoulis.github.io/personal-finance-dashboard/
 
 ---
 
+## Screenshots
+
+| Dashboard (Hub) | Salary & Bonuses |
+|---|---|
+| ![Dashboard](screenshots/hub-desktop.png) | ![Salary & Bonuses](screenshots/salary-desktop.png) |
+
+| Loan (with debt-to-income indicator) | Mobile view |
+|---|---|
+| ![Loan tab](screenshots/loan-desktop.png) | ![Mobile dashboard](screenshots/hub-mobile.png) |
+
+---
+
 ## What it does
 
-The tool is organized into four connected tabs, each feeding data into the others:
+Landing on the site opens a **dashboard** with five live summary cards — tap any card to jump into its full tab. Everything is connected: your net salary flows into the budget, the budget's suggested savings flows into the investment calculator, and so on.
 
-### 1. Salary & Bonuses
-- Net salary calculation from gross, using the current Greek employee tax scale (2026), with three age-based brackets:
+### Dashboard
+- Five live cards (Salary, Budget, Investments, Vehicle Expenses, Loan), each showing its key number at a glance
+- Tap a card to open the full tab; a home icon in the tab bar always brings you back
+
+### Salary & Bonuses
+- Net salary calculation from gross, using the current Greek employee tax scale, with three age-based brackets:
   - Over 30 (standard scale)
   - 26–30 years old (flat 9% up to €20,000, then standard scale)
   - Up to 25 years old (0% tax up to €20,000, then standard scale)
@@ -19,17 +35,20 @@ The tool is organized into four connected tabs, each feeding data into the other
 - Overwork (+20%), overtime (+40%), and holiday-work (+75% supplement) extra pay, combined with the regular salary and taxed/insured together through the same progressive scale (confirmed against a real payslip)
 - Annual tax credit tapering (€777 base, reduced €20 per €1,000 of income above €12,000)
 
-### 2. Budget
+### Budget
 - Personal monthly budget: income, fixed expenses, available balance
 - Savings percentage suggestion, feeding automatically into the investment calculator
-- Investment calculator: starting amount, contributions, compound interest, with a year-by-year growth chart
-- Vacation/activities fund, fed by any bonus surplus left over after vehicle expenses
+- Reserve fund, fed by any bonus surplus left over after vehicle expenses — for vacations, unexpected costs, or any other goal
 
-### 3. Vehicle Expenses
+### Investments
+- Compound-interest calculator: starting amount, regular contributions, rate of return, compounding frequency
+- Year-by-year growth chart (contributions vs. growth)
+
+### Vehicle Expenses
 - Fixed annual costs (insurance, road tax, service) and operating monthly costs (fuel, parking, other)
 - Fully independent of whether a loan exists — usable for a vehicle owned outright
 
-### 4. Loan
+### Loan
 - French amortization schedule (fixed monthly payment), with yearly/monthly views
 - Partial prepayment scenarios: shorten the term or lower the payment
 - Debt-to-income indicator, flagging when the payment exceeds the 30–35% rule of thumb Greek banks typically use for loan affordability
@@ -38,7 +57,7 @@ The tool is organized into four connected tabs, each feeding data into the other
 
 ## Design notes
 
-- **No backend, no build step.** It's one HTML file with inline CSS and JavaScript. Open it directly in a browser or host it anywhere that serves static files.
+- **No backend, no build step.** Three plain files — `index.html`, `style.css`, `script.js`. Open `index.html` directly in a browser or host the folder anywhere that serves static files.
 - **Bilingual.** A single toggle switches every label, tip, and generated report between Greek and English. Currency formatting adapts to the selected language's locale.
 - **Input validation.** Numeric fields are clamped to sensible bounds (percentages capped at 100%, non-negative amounts, etc.) on blur.
 - **Printable report.** A dedicated print view summarizes the active tabs into a clean, non-interactive report.
@@ -59,8 +78,24 @@ open index.html   # or just double-click the file
 
 ## Deploying your own copy
 
-The repo is set up for GitHub Pages (Settings → Pages → deploy from `main` branch, root folder). Any static host (Netlify, Vercel, Cloudflare Pages) works the same way — just upload `index.html`.
+The repo is set up for GitHub Pages (Settings → Pages → deploy from `main` branch, root folder). Any static host (Netlify, Vercel, Cloudflare Pages) works the same way — just upload `index.html`, `style.css`, and `script.js`.
+
+## Testing
+
+`tests/qa_tests.py` is a Playwright-driven regression suite that opens the app in a real headless browser and checks the core calculations (loan, salary/tax, investment growth), the dashboard's card-to-tab navigation, and mobile rendering across several widths and both languages.
+
+```bash
+pip install playwright
+playwright install chromium
+python tests/qa_tests.py
+```
+
+See [TECHNICAL.md](TECHNICAL.md) for what each check covers.
+
+## Technical documentation
+
+For an in-depth look at the calculation logic, architecture, and design decisions, see [TECHNICAL.md](TECHNICAL.md).
 
 ## License
 
-See repository license file (or add one — this project doesn't currently declare a license).
+MIT — see [LICENSE](LICENSE) for details.

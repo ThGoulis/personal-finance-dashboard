@@ -2,45 +2,62 @@
 
 ## 1. Architecture Overview
 
-**Type:** Single-file, static web application (`index.html`). No backend, no build process, no external runtime dependencies beyond Google Fonts (loaded via `@import`).
+**Type:** Static web application split into three files (`index.html`, `style.css`, `script.js`). No backend, no build process, no external runtime dependencies beyond Google Fonts (loaded via `@import`).
 
 **Stack:** Vanilla HTML5, CSS3 (custom properties for theming), vanilla JavaScript (ES6+). No frameworks, no bundler.
 
-**Rendering model:** Four tab panels (`#tabSalary`, `#tabBudget`, `#tabMoto`, `#tabLoan`) toggled via inline `style.display`, managed by a `showTab(name)` function. All four panels exist in the DOM simultaneously; only one is visible at a time.
+**Rendering model:** Six panels (`#tabHub`, `#tabSalary`, `#tabBudget`, `#tabInvest`, `#tabMoto`, `#tabLoan`) toggled via inline `style.display`, managed by a `showTab(name)` function. All six panels exist in the DOM simultaneously; only one is visible at a time. `#tabHub` (the dashboard) is the default view on load.
 
 **State management:** No formal state store. All state lives in the DOM (input field values) plus a small set of module-level `let` globals that cache the most recent computed results for cross-tab consumption (see §4.6).
 
 ---
 
-## 2. File Structure (single file, logical sections)
+## 2. File Structure
 
 ```
-<head>
+index.html
   - Meta tags: charset, viewport, title, description, OG/Twitter cards, Google verification
-  - Inline <style>: CSS custom properties, base styles, component styles, responsive rules
-
-<body>
+  - <link rel="stylesheet" href="style.css">
   - Letterhead (title, tagline, language toggle, date stamp)
   - Dismissible intro card (first-visit onboarding)
   - Toolbar (Reset to Defaults, Print Report)
-  - Summary bar (mini live dashboard: net salary, savings, loan payment, balance, status badge)
-  - Tab navigation
-  - Tab panels (Salary → Budget → Vehicle Expenses → Loan)
-  - Site-wide disclaimer footer
+  - Summary bar (mini live reference: net salary, savings, loan payment, unified balance + status pill)
+  - Tab navigation (Hub icon + 5 text tabs)
+  - Tab panels:
+      Hub    -> 5 live summary cards (Salary, Budget, Investments, Vehicle, Loan),
+               each a clickable shortcut into its own tab
+      Salary -> net salary, bonuses, extra hours
+      Budget -> personal budget, reserve fund
+      Invest -> compound-interest calculator (its own tab, previously nested in Budget)
+      Moto   -> vehicle expenses (fixed + operating), independent of loan status
+      Loan   -> amortization, prepayment scenarios, debt-to-income indicator
+  - Site-wide disclaimer footer + signature/license line
   - Hidden #printReport container (populated on demand)
+  - <script src="script.js">
 
-  <script>
-    - TRANSLATIONS dictionary (el/en) + i18n apply/set/load functions
-    - Currency formatting helpers (locale-aware)
-    - Loan amortization engine (recompute, buildSchedule, monthlyPayment)
-    - Prepayment scenario engine (computePrepayment)
-    - Salary/tax engine (netFromGross, annualTax, effectiveTaxCredit, recomputeSalary)
-    - Budget engine (recomputeBudget) incl. bonus-to-expense allocation, vacation fund,
-      DTI indicator, summary bar updates
-    - Investment calculator engine (recomputeInvestment)
-    - Input validation/clamping (FIELD_BOUNDS)
-    - Print report generator (builds a standalone HTML report on demand)
-    - Init sequence (initial recompute calls, event listener wiring)
+style.css
+  - CSS custom properties (design tokens), base styles, component styles, responsive rules
+
+script.js
+  - TRANSLATIONS dictionary (el/en) + i18n apply/set/load functions
+  - Currency formatting helpers (locale-aware)
+  - Loan amortization engine (recompute, buildSchedule, monthlyPayment)
+  - Prepayment scenario engine (computePrepayment)
+  - Salary/tax engine (netFromGross, annualTax, effectiveTaxCredit, recomputeSalary)
+  - Budget engine (recomputeBudget) incl. bonus-to-expense allocation, reserve fund,
+    DTI indicator, summary bar updates
+  - Investment calculator engine (recomputeInvestment)
+  - Hub dashboard engine (updateHubCards) -- mirrors already-computed values into
+    the dashboard cards; does not duplicate any calculation logic
+  - Input validation/clamping (FIELD_BOUNDS)
+  - Print report generator (builds a standalone HTML report on demand)
+  - Init sequence (initial recompute calls, event listener wiring, showTab('hub'))
+
+tests/qa_tests.py
+  - Playwright-driven regression suite (see Section 9)
+
+screenshots/
+  - Reference images used in README.md
 ```
 
 ---
@@ -56,8 +73,12 @@
 - `.grid` — two-column layout (1.1fr/1fr), collapses to one column ≤760px
 - `.results` — 2-column grid for paired result boxes, collapses to one column ≤640px
 - `.result-box.big` — spans all columns via `grid-column:1/-1` (not `1/3`, which would hard-code a 2-column assumption and break single-column grids)
+- `.hub-grid` — 2-column grid of dashboard cards (`.hub-card`), one card (`.hub-card-wide`) spans full width via `grid-column:1/-1`
+- `.tab-nav` (mobile) — 3-column **CSS Grid** (not flex-wrap): every button in the same row gets equal height automatically, avoiding the ragged look flex-wrap produces when one label wraps to two lines and its neighbors don't
 
-**Responsive strategy:** one `@media (max-width:640px)` block handles mobile refinements without touching desktop rules. Both `.grid` and `.results` children get `min-width:0` explicitly — without it, CSS Grid's default `min-width:auto` lets long content (especially English strings, which run longer than Greek) force items wider than their track, causing horizontal overflow that clips or scrolls.
+**Responsive strategy:** one `@media (max-width:640px)` block handles mobile refinements without touching desktop rules. Grid children (`.grid`, `.results`, `.tab-nav` buttons) get `min-width:0` explicitly — without it, CSS Grid's default `min-width:auto` lets long content (especially English strings, which run longer than Greek, or single long Greek words with no space to wrap on, like "Προϋπολογισμός") force items wider than their track, causing horizontal overflow that clips or scrolls. Long single words additionally get `overflow-wrap:break-word` so they can wrap mid-word when they still don't fit.
+
+**A note on rule order:** the file has both a base (desktop) `.tab-nav{ display:flex; }` rule and a later mobile-only `.tab-nav{ display:grid; }` override. Because CSS cascades per-*declaration*, not per-rule, a later unconditional rule can silently win over an earlier media-query rule for any property both declare — this bit us once (the mobile grid layout was being overridden back to flex) and needed a targeted `!important` to resolve. Worth remembering before assuming "it's in a media query so it must apply."
 
 ---
 
@@ -65,14 +86,14 @@
 
 ### 4.1 Net salary (`netFromGross`)
 ```
-ss             = round(gross × ssRate%)
-taxable        = gross − ss
-annualTaxable  = taxable × 14                    (14-salary system)
+ss             = round(gross x ssRate%)
+taxable        = gross - ss
+annualTaxable  = taxable x 14                    (14-salary system)
 grossAnnualTax = bracket_tax(annualTaxable, ageBracket)
 usedCredit     = effectiveTaxCredit(baseCredit, annualTaxable)
-annualTaxAfterCredit = max(grossAnnualTax − usedCredit, 0)
+annualTaxAfterCredit = max(grossAnnualTax - usedCredit, 0)
 monthlyTax     = annualTaxAfterCredit / 14
-net            = gross − ss − monthlyTax
+net            = gross - ss - monthlyTax
 ```
 Rounding (`r2`, round-to-cents) is applied after every intermediate step, matching how real payroll systems round, not just at the final result. This was verified line-for-line against a real payslip.
 
@@ -80,12 +101,12 @@ Rounding (`r2`, round-to-cents) is applied after every intermediate step, matchi
 Three bracket tables (`TAX_BRACKETS_BY_AGE`), selected by the `ageBracket` field:
 ```
 standard (>30):    9% | 20% | 26% | 34% | 39% | 44%
-                   thresholds: €10k / €20k / €30k / €40k / €60k
+                   thresholds: EUR10k / EUR20k / EUR30k / EUR40k / EUR60k
 
-young30 (26-30):   9% flat to €20k, then same upper brackets as standard
+young30 (26-30):   9% flat to EUR20k, then same upper brackets as standard
                    (26% | 34% | 39% | 44%)
 
-young25 (≤25):     0% to €20k, then same upper brackets as standard
+young25 (<=25):    0% to EUR20k, then same upper brackets as standard
                    (26% | 34% | 39% | 44%)
 ```
 Age only changes the tax scale — it does not affect EFKA contributions or the tax credit.
@@ -95,57 +116,58 @@ Age only changes the tax scale — it does not affect EFKA contributions or the 
 if annualTaxable <= 12000:
     usedCredit = baseCredit
 else:
-    reduction  = 20 × (annualTaxable − 12000) / 1000
-    usedCredit = max(baseCredit − reduction, 0)
+    reduction  = 20 x (annualTaxable - 12000) / 1000
+    usedCredit = max(baseCredit - reduction, 0)
 ```
-Full credit (default €777, adjustable for dependents) applies for annual taxable income ≤ €12,000; above that it decreases €20 per additional €1,000, floored at 0.
+Full credit (default EUR777, adjustable for dependents) applies for annual taxable income <= EUR12,000; above that it decreases EUR20 per additional EUR1,000, floored at 0.
 
 ### 4.4 Bonuses (Christmas, Easter, leave allowance)
 ```
 employedDays = days between max(hireDate, periodStart) and periodEnd
 totalDays    = days between periodStart and periodEnd
 ratio        = employedDays / totalDays              (0 if hireDate > periodEnd)
-bonusGross   = fullAmount × ratio
-bonusNet     = bonusGross × (regularNet / regularGross)
+bonusGross   = fullAmount x ratio
+bonusNet     = bonusGross x (regularNet / regularGross)
 ```
-Periods: Christmas + leave allowance → **May 1 – Dec 31** of the current year. Easter → **Jan 1 – Apr 30** of the current year.
+Periods: Christmas + leave allowance -> **May 1 - Dec 31** of the current year. Easter -> **Jan 1 - Apr 30** of the current year.
 
 Each bonus's **net** amount is derived by applying the regular salary's effective net ratio (`net / gross`), not a separate tax calculation — bonuses are taxed at the same average rate as the regular salary rather than being independently annualized.
 
 ### 4.5 Extra hours (overwork / overtime / holiday work)
 ```
 hourlyWage    = gross / 25 / 6.667
-overworkGross = hours × hourlyWage × 1.20
-overtimeGross = hours × hourlyWage × 1.40
-holidayGross  = hours × hourlyWage × 0.75   (supplement only — base day pay
+overworkGross = hours x hourlyWage x 1.20
+overtimeGross = hours x hourlyWage x 1.40
+holidayGross  = hours x hourlyWage x 0.75   (supplement only -- base day pay
                                               is already covered by the monthly salary)
 ```
-**Important correction (verified against a real payslip):** extra-hours gross pay is *not* taxed separately at a flat rate. It is added to the regular gross, and the **combined total** is run through the same EFKA + progressive-tax pipeline as §4.1:
+**Correction verified against a real payslip:** extra-hours gross pay is *not* taxed separately at a flat rate. It is added to the regular gross, and the **combined total** is run through the same EFKA + progressive-tax pipeline as Section 4.1:
 ```
 combinedGross = gross + extraGross
 combinedNet   = netFromGross(combinedGross, ssRate, taxCredit, ageBracket)
-extraPayNet   = combinedNet − regularNet          (marginal contribution)
+extraPayNet   = combinedNet - regularNet          (marginal contribution)
+netTotal      = combinedNet
 ```
-The extra pay's displayed "net" figure is the *marginal difference* between the combined-total net and the regular-only net — i.e. what the extra hours actually add to take-home pay once progressive taxation is accounted for, not an isolated flat-rate calculation.
+The extra pay's displayed "net" figure is the *marginal difference* between the combined-total net and the regular-only net — i.e. what the extra hours actually add to take-home pay once progressive taxation is accounted for, not an isolated flat-rate calculation. Reconciled against a real payslip (7h overwork + 1h overtime on a EUR1,200 base) to within 2 cents once the exact EFKA sub-rate was known; the tool's default 13.37% rate is a reasonable general-case default, not a universal constant — real EFKA rates vary slightly by insurance category.
 
-Known gap: a fourth premium tier exists in law (Ν.4808/2021) for legal overtime beyond 150 hours/year (+60%) and illegal overtime (+120%). The tool currently only models +20% (overwork) / +40% (overtime) / +75%-supplement (holiday work).
+Known gap: a fourth premium tier exists in law (N.4808/2021) for legal overtime beyond 150 hours/year (+60%) and illegal overtime (+120%). The tool currently only models +20% (overwork) / +40% (overtime) / +75%-supplement (holiday work).
 
 ### 4.6 Cross-tab state (module-level globals)
 `recomputeSalary()` writes: `lastNetSalary`, `lastExtraNet`, `lastAvgBonusEquiv`, `lastXmasNet`, `lastEasterNet`, `lastLeaveNet`.
 `recompute()` (loan) writes: `lastMonthlyPayment`.
-`recomputeBudget()` writes: `lastSavingsSuggestion`, `lastAllocationSurplus`.
-These are read across tabs — e.g. the Budget tab's remaining-balance calculation reads `lastNetSalary` regardless of which tab is currently visible, which is what lets the tool present a coherent picture instead of four isolated calculators.
+`recomputeBudget()` writes: `lastSavingsSuggestion`, `lastAllocationSurplus`, `lastPureVehicleCost`.
+These are read across tabs — e.g. the Budget tab's remaining-balance calculation reads `lastNetSalary` regardless of which tab is currently visible, which is what lets the tool present a coherent picture instead of several isolated calculators. `updateHubCards()` reads from the *already-rendered* summary bar, DTI badge, and vehicle-cost DOM values rather than recomputing anything itself — the Hub is a pure mirror, never a second source of truth.
 
 ### 4.7 Loan amortization
 ```
 r = annualRate / 12
-M = P × r / (1 − (1 + r)^-n)
+M = P x r / (1 - (1 + r)^-n)
 ```
 Standard French amortization (fixed monthly payment `M`, principal `P`, `n` installments). Schedule built month-by-month (`buildSchedule`) tracking interest/principal/balance per row.
 
 ### 4.8 Partial prepayment
 ```
-newBalance = balanceAtMonth − prepaymentAmount
+newBalance = balanceAtMonth - prepaymentAmount
 
 mode = "shorten":  keep M fixed,  solve for new n  (fewer remaining installments)
 mode = "lower":    keep n fixed,  solve for new M  (smaller installment)
@@ -154,48 +176,56 @@ Both modes rebuild a full schedule from the reduced balance to compute interest 
 
 ### 4.9 Debt-to-income (DTI) indicator
 ```
-pct = (lastMonthlyPayment / lastNetSalary) × 100
+pct = (lastMonthlyPayment / lastNetSalary) x 100
 
-pct < 30        -> "ok"   (surplus)
-30 <= pct <= 35 -> "warn" (caution)
-pct > 35        -> "over" (above typical bank threshold)
+pct < 30        -> "ok"   (sufficient)
+30 <= pct <= 35 -> "warn" (marginal)
+pct > 35        -> "over" (insufficient / above typical bank threshold)
 ```
-Compared against the 30–35% range Greek banks commonly use as a lending guideline. Framed explicitly as a bank rule of thumb, not a guarantee or the tool's own recommendation.
+Compared against the 30-35% range Greek banks commonly use as a lending guideline. Framed explicitly as a bank rule of thumb, not a guarantee or the tool's own recommendation. The same three-tier language (Section 6... see terminology note in Section 5) is reused for the overall budget status, so the two indicators read consistently.
 
 ### 4.10 Investment calculator
 Month-by-month simulation (not a closed-form formula), so mismatched contribution/compounding frequencies resolve correctly:
 ```
-effectiveAnnualRate = (1 + rate/compoundFreq)^compoundFreq − 1
-monthlyRate          = (1 + effectiveAnnualRate)^(1/12) − 1
+effectiveAnnualRate = (1 + rate/compoundFreq)^compoundFreq - 1
+monthlyRate          = (1 + effectiveAnnualRate)^(1/12) - 1
 
 for each month:
-    balance = balance × (1 + monthlyRate)
+    balance = balance x (1 + monthlyRate)
     if contribution is due this month:
         balance = balance + contributionAmount
 ```
+Lives in its own tab (`#tabInvest`); the contribution field auto-fills from the Budget tab's suggested savings amount unless manually overridden (tracked via a `touched` flag on the field, with a small "re-sync" affordance to clear it).
 
 ### 4.11 Budget & bonus allocation
 ```
 for each of the 6 permutations of {insurance, roadTax, service}
     assigned to {Christmas, Easter, leaveAllowance}:
         covered   = count of pairs where bonus >= expense
-        shortfall = sum of |bonus − expense| across all pairs
+        shortfall = sum of |bonus - expense| across all pairs
 pick the permutation maximizing `covered`, then minimizing `shortfall`
-surplus = sum(bonus − matchedExpense) across the winning permutation
+surplus = sum(bonus - matchedExpense) across the winning permutation
 ```
-Any surplus feeds the suggested vacation-fund addition. This runs independent of whether a loan exists, since vehicle expenses are meaningful whether or not the vehicle was financed.
+Any surplus feeds the suggested reserve-fund addition. This runs independent of whether a loan exists, since vehicle expenses are meaningful whether or not the vehicle was financed.
+
+### 4.12 Vehicle cost vs. loan payment (avoiding double-counting)
+The Budget tab's own "Total Monthly Vehicle Cost" box (`fMotoTotal`) intentionally *includes* the loan payment (`motoTotal = lastMonthlyPayment + fixedMonthlyEquiv + variableMonthly`), because it sits directly beneath a separate "Loan Payment" line in the same card — the pairing makes the inclusion self-evident there.
+
+Reusing that same combined figure elsewhere (the Hub card, the print report) turned out to double-count the loan: both a standalone "Loan" section/card *and* a "Vehicle Expenses" section/card would each show a number that included the same payment, with no adjacent line to clarify it. Fixed by tracking a second global, `lastPureVehicleCost = fixedMonthlyEquiv + variableMonthly` (no loan), and using *that* for any context where the vehicle total is shown without its loan figure directly alongside it. The lesson: a combined total is only safe to reuse in the exact layout context that justified combining it in the first place — anywhere else, use the disaggregated figure.
 
 ---
 
 ## 5. Internationalization (i18n)
 
-Every static string carries a `data-i18n="key"` attribute. Two dictionaries (`TRANSLATIONS.el`, `TRANSLATIONS.en`) hold the full innerHTML for each key (including nested `<span>` sub-notes, so translation can't accidentally strip inline styling). `applyStaticTranslations()` walks all `[data-i18n]` elements on load and on language toggle, replacing `innerHTML` from the active dictionary. Placeholder text uses a parallel `data-i18n-ph` attribute.
+Every static string carries a `data-i18n="key"` attribute. Two dictionaries (`TRANSLATIONS.el`, `TRANSLATIONS.en`) hold the full innerHTML for each key (including nested `<span>` sub-notes, so translation can't accidentally strip inline styling). `applyStaticTranslations()` walks all `[data-i18n]` elements on load and on language toggle, replacing `innerHTML` from the active dictionary. Placeholder text uses a parallel `data-i18n-ph` attribute; `aria-label` uses `data-i18n-aria` (added when the Hub's icon-only home button needed a translated label with no visible text to carry it).
 
-Dynamic (JS-generated) strings — tips, banners, badge text, the print report — are **not** in the dictionary; each call site branches on `currentLang` directly with inline ternaries.
+Dynamic (JS-generated) strings — tips, banners, badge/pill text, the print report, the Hub cards' detail lines — are **not** in the dictionary; each call site branches on `currentLang` directly with inline ternaries.
 
-**Known trap:** static elements' *initial* HTML content is cosmetic only — the dictionary entry is what actually renders, since `applyStaticTranslations()` overwrites it immediately on load. Any change to a numbered section label (e.g. renumbering) must be made in **both** the HTML and the corresponding dictionary entries in both languages, or the dictionary's stale value silently reappears. This caused a real regression once during development (renumbered sections showing old numbers) and is worth remembering for any future content changes.
+**Status terminology:** the budget/DTI status pill uses **Eparkes / Oriako / Aneparkes** (Sufficient / Marginal / Insufficient) rather than more colloquial or more jargon-heavy alternatives — chosen after two rounds of feedback: plain-language options ("sou perissevei") read as too casual for an experienced user, while the original finance jargon ("Pleonasma/Elleimma") wasn't self-explanatory to a first-time visitor. The chosen terms describe the *state of the balance* directly, in neutral register, understandable without financial vocabulary.
 
-Currency formatting (`euro`/`euroDec`) switches locale (`el-GR` vs `en-IE`) based on `currentLang`, so the same numeric value renders as `1.234,56 €` or `€1,234.56` correctly.
+**Known trap:** static elements' *initial* HTML content is cosmetic only — the dictionary entry is what actually renders, since `applyStaticTranslations()` overwrites it immediately on load. Any change to a label (e.g. renumbering a section, shortening a tab name) must be made in **both** the HTML and the corresponding dictionary entries in both languages, or the dictionary's stale value silently reappears. This caused a real regression during development (renumbered sections showing old numbers) and is worth remembering for any future content changes.
+
+Currency formatting (`euro`/`euroDec`) switches locale (`el-GR` vs `en-IE`) based on `currentLang`, so the same numeric value renders as `1.234,56 EUR` or `EUR1,234.56` correctly. Any value written into an `<input>` field programmatically uses `.toFixed(2)` rather than a bare rounded number — assigning a raw JS float (even one already passed through `r2()`) to `.value` can still surface binary floating-point artifacts like `232.95600000000002` in the rendered field; `.toFixed(2)` guarantees a clean two-decimal string.
 
 ---
 
@@ -206,13 +236,13 @@ HTML `min`/`max` attributes only affect the spinner arrows — they do **not** b
 if min is set and value < min: value = min
 if max is set and value > max: value = max
 ```
-Applied bounds: percentages capped 0–100 (interest rate, EFKA rate, savings %, investment return), non-negative amounts everywhere, sane upper caps on hour fields (300) and terms (installments ≤600, investment years ≤100).
+Applied bounds: percentages capped 0-100 (interest rate, EFKA rate, savings %, investment return), non-negative amounts everywhere, sane upper caps on hour fields (300) and terms (installments <=600, investment years <=100).
 
 ---
 
 ## 7. Known Limitations
 
-- Extra-hours premium tiers beyond +40% (the 150-hour/year threshold and illegal-overtime rates) are not modeled (§4.5).
+- Extra-hours premium tiers beyond +40% (the 150-hour/year threshold and illegal-overtime rates) are not modeled (Section 4.5).
 - The bonus-to-vehicle-expense allocation assumes exactly three fixed expense categories; it isn't generalized for arbitrary category counts.
 - No persistence — there is intentionally no save/load mechanism (removed by design once the print report existed as an alternative); each session starts from defaults.
 - Loan prepayment assumes no fees/insurance/early-repayment penalties.
@@ -222,4 +252,29 @@ Applied bounds: percentages capped 0–100 (interest rate, EFKA rate, savings %,
 
 ## 8. Deployment & SEO
 
-Hosted on GitHub Pages (`main` branch, root). SEO surface: descriptive `<title>`/`<meta description>`, Open Graph + Twitter Card tags with a generated 1200×630 preview image, `sitemap.xml`, `robots.txt`, Google Search Console verification (both meta-tag and HTML-file methods present for redundancy). `lang="el"` on `<html>` ensures correct Greek uppercase mapping (tonos-stripping) wherever `text-transform:uppercase` is used — this only works correctly when the language attribute is set, which is worth remembering if the markup is ever repurposed (e.g. the OG-image generation template initially lacked it and rendered incorrectly as a result).
+Hosted on GitHub Pages (`main` branch, root). SEO surface: descriptive `<title>` and a `<meta description>` deliberately kept under ~155 characters (Google truncates SERP snippets around there — an earlier, longer description was being cut mid-word), Open Graph + Twitter Card tags with a generated 1200x630 preview image, `sitemap.xml`, `robots.txt`, Google Search Console verification (both meta-tag and HTML-file methods present for redundancy). `lang="el"` on `<html>` ensures correct Greek uppercase mapping (tonos-stripping) wherever `text-transform:uppercase` is used — this only works correctly when the language attribute is set, which is worth remembering if the markup is ever repurposed (e.g. the OG-image generation template initially lacked it and rendered incorrectly as a result).
+
+The visible on-page intro text and the `<meta description>` are deliberately different: the former is short and brand-toned (what a human reader sees first), the latter stays keyword-dense within its display budget (what a search engine surfaces). Changing one doesn't require changing the other.
+
+Repository includes an MIT `LICENSE` and a small footer signature/attribution line, added once the project moved from a private tool to something publicly hosted.
+
+---
+
+## 9. Quality Assurance
+
+`tests/qa_tests.py` is a Playwright-driven regression suite that opens `index.html` in a real headless browser and checks:
+- Loan amortization and partial-prepayment figures against independently-verified reference values
+- Salary/tax output, including the combined-gross extra-hours treatment (Section 4.5)
+- Investment calculator growth
+- Vehicle-cost vs. loan double-counting (Section 4.12)
+- Hub dashboard default view and card-to-tab navigation
+- Horizontal-overflow-free rendering at 320/375/412px, in both languages, across every tab
+- Input clamping (Section 6)
+
+Run it with:
+```
+pip install playwright
+playwright install chromium
+python tests/qa_tests.py
+```
+Exits non-zero if any check fails, printing which one(s). Every reference value in the suite was itself cross-checked against an independent Python re-implementation of the relevant formula (or, for the salary/tax logic, a real payslip) before being hard-coded as the expected result — the point of the suite is to catch *regressions* against known-good numbers, not to (re-)establish that the numbers are correct in the first place.
