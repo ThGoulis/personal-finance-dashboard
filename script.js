@@ -1492,11 +1492,25 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
   const pt = (el, en) => currentLang==='en' ? en : el;
 
   const hasLoan = parseFloat(val('amount')) > 0;
+  const employmentType = document.getElementById('employmentType').value;
+  const isFreelancer = employmentType === 'freelancer';
+  const is12 = employmentType === 'salaried12';
 
-  let html = `
-    <h1>${pt('Οικονομικός Σχεδιασμός — Αναφορά','Financial Planner — Report')}</h1>
-    <div class="print-date">${new Date().toLocaleDateString(currentLang==='en' ? 'en-GB' : 'el-GR')}</div>
-
+  const salarySection = isFreelancer ? `
+    <h2>${pt('Ελεύθερος Επαγγελματίας','Self-Employed / Freelancer')}</h2>
+    <table>
+      <tr><td>${pt('Μέσο μηνιαίο καθαρό κέρδος','Average Monthly Net Profit')}</td><td>${val('freelancerProfit')} €</td></tr>
+      <tr><td>${pt('Ετήσιο καθαρό κέρδος','Annual Net Profit')}</td><td>${txt('fpAnnualProfit')}</td></tr>
+      <tr><td>${pt('ΕΦΚΑ (σταθερό/μήνα)','EFKA (fixed/month)')}</td><td>${txt('fpEfkaMonthly')}</td></tr>
+      <tr><td>${pt('Φορολογητέο εισόδημα (ετήσιο)','Taxable Income (annual)')}</td><td>${txt('fpTaxable')}</td></tr>
+      <tr><td>${pt('Αρχικός φόρος κλίμακας','Initial Bracket Tax')}</td><td>${txt('fpGrossTax')}</td></tr>
+      <tr><td>${pt('Μείωση φόρου','Tax Credit')}</td><td>${txt('fpCredit')}</td></tr>
+      <tr><td>${pt('Τελικός ετήσιος φόρος','Final Annual Tax')}</td><td>${txt('fpFinalTax')}</td></tr>
+      <tr><td><strong>${pt('Καθαρό μηνιαίο εισόδημα','Net Monthly Income')}</strong></td><td><strong>${txt('fpNetMonthly')}</strong></td></tr>
+      <tr><td>${pt('Προκαταβολή φόρου (επόμενο έτος)','Advance Tax Payment (next year)')}</td><td>${txt('fpAdvanceTax')}</td></tr>
+    </table>
+    <p style="font-size:11px;color:#666;">${pt('Ενδεικτικός υπολογισμός. Δεν περιλαμβάνει τεκμαρτό εισόδημα, ειδικές εξαιρέσεις, ή ΦΠΑ.','Indicative calculation only. Does not include presumptive income, special exemptions, or VAT.')}</p>
+  ` : `
     <h2>${pt('Μισθός & Δώρα','Salary & Bonuses')}</h2>
     <table>
       <tr><td>${pt('Μικτός μηνιαίος μισθός','Gross Monthly Salary')}</td><td>${txt('sGross')}</td></tr>
@@ -1505,10 +1519,19 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
       <tr><td>${pt('Καθαρός μηνιαίος μισθός (τακτικός)','Net Monthly Salary (Regular)')}</td><td>${txt('sNet')}</td></tr>
       <tr><td>${pt('Πρόσθετες αμοιβές (καθαρό)','Extra Pay (net)')}</td><td>${txt('sExtraPayNet')}</td></tr>
       <tr><td><strong>${pt('Σύνολο καθαρών μηνιαίων αποδοχών','Total Net Monthly Earnings')}</strong></td><td><strong>${txt('sNetTotal')}</strong></td></tr>
+      ${is12 ? '' : `
       <tr><td>${pt('Δώρο Χριστουγέννων (καθαρό)','Christmas Bonus (net)')}</td><td>${txt('xmasNet')}</td></tr>
       <tr><td>${pt('Δώρο Πάσχα (καθαρό)','Easter Bonus (net)')}</td><td>${txt('easterNet')}</td></tr>
       <tr><td>${pt('Επίδομα Αδείας (καθαρό)','Leave Allowance (net)')}</td><td>${txt('leaveNet')}</td></tr>
+      `}
     </table>
+  `;
+
+  let html = `
+    <h1>${pt('Οικονομικός Σχεδιασμός — Αναφορά','Financial Planner — Report')}</h1>
+    <div class="print-date">${new Date().toLocaleDateString(currentLang==='en' ? 'en-GB' : 'el-GR')}</div>
+
+    ${salarySection}
 
     ${hasLoan ? `
     <h2>${pt('Δάνειο','Loan')}</h2>
