@@ -1210,6 +1210,7 @@ function recomputeSalary(){
 
   // --- Show/hide sections depending on employment type ---
   document.getElementById('salariedOnlyFields').style.display = isFreelancer ? 'none' : 'block';
+  document.getElementById('extraHoursFields').style.display = isFreelancer ? 'none' : 'block';
   document.getElementById('freelancerOnlyFields').style.display = isFreelancer ? 'block' : 'none';
   document.getElementById('salariedResults').style.display = isFreelancer ? 'none' : 'grid';
   document.getElementById('freelancerResults').style.display = isFreelancer ? 'grid' : 'none';
