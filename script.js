@@ -106,7 +106,9 @@ const TRANSLATIONS = {
   "freslbl5": "Μείωση φόρου",
   "freslbl6": "Τελικός ετήσιος φόρος",
   "freslbl7": "Καθαρό μηνιαίο εισόδημα",
-  "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, \"μπλοκάκι\", αναπηρία 80%+), ή ΦΠΑ. Επιπλέον, τον επόμενο χρόνο συνήθως θα χρειαστεί να καταβάλετε προκαταβολή φόρου (τυπικά ένα μεγάλο ποσοστό του φετινού φόρου, μειωμένο τα πρώτα χρόνια δραστηριότητας) — συμβουλευτείτε λογιστή για το ακριβές ποσοστό στην περίπτωσή σας.</p>",
+  "freslbl8": "Προκαταβολή φόρου <span style=\"font-weight:400;\">(για το επόμενο έτος)</span>",
+  "lblFirstYear": "Πρώτο έτος επαγγελματικής δραστηριότητας <span style=\"font-weight:400;\">(μειωμένη προκαταβολή φόρου)</span>",
+  "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, \"μπλοκάκι\", αναπηρία 80%+), ή ΦΠΑ. Η προκαταβολή φόρου υπολογίζεται με τα τυπικά ποσοστά (55% κανονικά, 27,5% το πρώτο έτος) — ενδέχεται να διαφέρει σε ειδικές περιπτώσεις (π.χ. πρόσθετες μειώσεις/εξαιρέσεις). Συμβουλευτείτε λογιστή για την ακριβή εικόνα σας.</p>",
   "unit105": "€",
   "lbl10": "Ημερομηνία πρόσληψης",
   "lblSsCategory": "Ασφαλιστική Κατηγορία",
@@ -323,7 +325,9 @@ const TRANSLATIONS = {
   "freslbl5": "Tax Credit",
   "freslbl6": "Final Annual Tax",
   "freslbl7": "Net Monthly Income",
-  "freelancerNoteText": "<p>Indicative calculation only. <strong>Does not include:</strong> presumptive/imputed minimum income, special exemptions (e.g. taxi drivers, small settlements, \"blokaki\" contractors, 80%+ disability), or VAT. Additionally, next year you will typically need to pay an advance tax installment (usually a large share of this year's tax, reduced in the first years of activity) — consult an accountant for the exact rate in your case.</p>",
+  "freslbl8": "Advance Tax Payment <span style=\"font-weight:400;\">(for next year)</span>",
+  "lblFirstYear": "First year of professional activity <span style=\"font-weight:400;\">(reduced advance tax)</span>",
+  "freelancerNoteText": "<p>Indicative calculation only. <strong>Does not include:</strong> presumptive/imputed minimum income, special exemptions (e.g. taxi drivers, small settlements, \"blokaki\" contractors, 80%+ disability), or VAT. The advance tax payment is calculated using the standard rates (55% normally, 27.5% in the first year) -- it may differ in special cases (e.g. additional reductions/exemptions). Consult an accountant for your exact picture.</p>",
   "unit105": "€",
   "lbl10": "Hire Date",
   "lblSsCategory": "Insurance Category",
@@ -1257,6 +1261,16 @@ function recomputeSalary(){
     document.getElementById('fpFinalTax').textContent = '-' + euroDec(finalTax);
     document.getElementById('fpNetMonthly').textContent = euroDec(netMonthly);
 
+    // Advance tax payment for next year: 55% of this year's tax, standard rate;
+    // 27.5% (half) in the taxpayer's first year of professional activity.
+    // Confirmed against multiple independent sources (ΑΑΔΕ rules, tax-advisory
+    // sites), consistent with each other. Does not model further special-case
+    // reductions/exemptions beyond the first-year halving.
+    const isFirstYear = document.getElementById('freelancerFirstYear').checked;
+    const advanceTaxRate = isFirstYear ? 0.275 : 0.55;
+    const advanceTax = r2(finalTax*advanceTaxRate);
+    document.getElementById('fpAdvanceTax').textContent = euroDec(advanceTax);
+
     lastNetSalary = netMonthly;
     lastAvgBonusEquiv = 0;
     lastExtraNet = 0;
@@ -1365,12 +1379,13 @@ function recomputeSalary(){
 }
 
 document.getElementById('income').addEventListener('input', function(){ this.dataset.touched = 'true'; });
-['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket','employmentType','freelancerProfit','freelancerCategory'].forEach(id=>{
+['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket','employmentType','freelancerProfit','freelancerCategory','freelancerFirstYear'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recomputeSalary);
 });
 document.getElementById('ageBracket').addEventListener('change', recomputeSalary);
 document.getElementById('employmentType').addEventListener('change', recomputeSalary);
 document.getElementById('freelancerCategory').addEventListener('change', recomputeSalary);
+document.getElementById('freelancerFirstYear').addEventListener('change', recomputeSalary);
 
 // --- Investment calculator ---
 function recomputeInvestment(){

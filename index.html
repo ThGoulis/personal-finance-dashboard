@@ -448,6 +448,13 @@
                 <option value="111.06" data-i18n="fcat7">Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)</option>
               </select>
             </div>
+
+            <div class="field">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="freelancerFirstYear" style="width:auto;">
+                <span data-i18n="lblFirstYear">Πρώτο έτος επαγγελματικής δραστηριότητας <span style="font-weight:400;">(μειωμένη προκαταβολή φόρου)</span></span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -511,6 +518,10 @@
             <div class="result-box big">
               <div class="label" data-i18n="freslbl7">Καθαρό μηνιαίο εισόδημα</div>
               <div class="value" id="fpNetMonthly">—</div>
+            </div>
+            <div class="result-box deduction" id="fpAdvanceTaxBox">
+              <div class="label" data-i18n="freslbl8">Προκαταβολή φόρου <span style="font-weight:400;">(για το επόμενο έτος)</span></div>
+              <div class="value" id="fpAdvanceTax">—</div>
             </div>
           </div>
           <div class="note" id="freelancerNote" data-i18n="freelancerNoteText" style="display:none;"><p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, "μπλοκάκι", αναπηρία 80%+), ή ΦΠΑ. Επιπλέον, τον επόμενο χρόνο συνήθως θα χρειαστεί να καταβάλετε προκαταβολή φόρου (τυπικά ένα μεγάλο ποσοστό του φετινού φόρου, μειωμένο τα πρώτα χρόνια δραστηριότητας) — συμβουλευτείτε λογιστή για το ακριβές ποσοστό στην περίπτωσή σας.</p></div>
