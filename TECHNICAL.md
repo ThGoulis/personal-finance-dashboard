@@ -141,14 +141,17 @@ overtimeGross = hours x hourlyWage x 1.40
 holidayGross  = hours x hourlyWage x 0.75   (supplement only -- base day pay
                                               is already covered by the monthly salary)
 ```
-**Correction verified against a real payslip:** extra-hours gross pay is *not* taxed separately at a flat rate. It is added to the regular gross, and the **combined total** is run through the same EFKA + progressive-tax pipeline as Section 4.1:
+**Correction, confirmed by multiple official sources:** extra-hours premiums are **exempt from EFKA contributions** for full-time employees, per Article 41 of Law 5184/2025 (as amended by Article 73 of Law 5239/2025) and e-EFKA circulars 8/2025 and 21/2025. This was initially implemented incorrectly (EFKA charged on the combined total) after over-indexing on a single real payslip that turned out to not correctly apply this exemption; the law itself, and every independent payroll/tax source describing it, was cross-checked afterward and confirms the exemption. Income tax is **not** exempted -- it still applies to the combined total through the same progressive scale, only the EFKA base is narrower:
 ```
-combinedGross = gross + extraGross
-combinedNet   = netFromGross(combinedGross, ssRate, taxCredit, ageBracket)
-extraPayNet   = combinedNet - regularNet          (marginal contribution)
+ss            = round(gross x ssRate%)              (EFKA on REGULAR gross only)
+combinedGross = gross + extraGross                    (tax base includes extra hours)
+taxable       = combinedGross - ss
+... same progressive-tax pipeline as Section 4.1, using this taxable ...
+combinedNet   = combinedGross - ss - monthlyTax
+extraPayNet   = combinedNet - regularNet              (marginal contribution)
 netTotal      = combinedNet
 ```
-The extra pay's displayed "net" figure is the *marginal difference* between the combined-total net and the regular-only net — i.e. what the extra hours actually add to take-home pay once progressive taxation is accounted for, not an isolated flat-rate calculation. Reconciled against a real payslip (7h overwork + 1h overtime on a EUR1,200 base) to within 2 cents once the exact EFKA sub-rate was known; the tool's default 13.37% rate is a reasonable general-case default, not a universal constant — real EFKA rates vary slightly by insurance category.
+The extra pay's displayed "net" figure is the *marginal difference* between the combined-total net and the regular-only net — i.e. what the extra hours actually add to take-home pay once progressive taxation is accounted for, not an isolated flat-rate calculation. A real payslip is useful for sanity-checking a formula, but is not a substitute for the primary source when the two disagree -- a single company's payroll system can misapply a law change; a law, ministry page, and several independent circulars agreeing with each other are much stronger evidence.
 
 Known gap: a fourth premium tier exists in law (N.4808/2021) for legal overtime beyond 150 hours/year (+60%) and illegal overtime (+120%). The tool currently only models +20% (overwork) / +40% (overtime) / +75%-supplement (holiday work).
 

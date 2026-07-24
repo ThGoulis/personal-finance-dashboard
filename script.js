@@ -114,7 +114,7 @@ const TRANSLATIONS = {
   "th133": "Καθαρό",
   "th134": "Ετήσια εικόνα (14 μισθοί)",
   "th135": "Ποσό",
-  "note93": "<p>Ενδεικτικός υπολογισμός με βάση την ισχύουσα φορολογική κλίμακα μισθωτών, η οποία διαφοροποιείται ανάλογα με την ηλικία: <strong>άνω των 30</strong> — 9% έως 10.000€ · 20% από 10.000,01 έως 20.000€ · 26% από 20.000,01 έως 30.000€ · 34% από 30.000,01 έως 40.000€ · 39% από 40.000,01 έως 60.000€ · 44% άνω των 60.000€. <strong>26 έως 30 ετών</strong> — 9% flat έως 20.000€, μετά ίδιο με την βασική κλίμακα (26%/34%/39%/44%). <strong>Έως 25 ετών</strong> — μηδενικός φόρος έως 20.000€, μετά ίδιο με την βασική κλίμακα. Η επιλογή ηλικίας δεν επηρεάζει τις κρατήσεις ΕΦΚΑ ή τη μείωση φόρου, μόνο την κλίμακα φόρου.</p><p>Η ετήσια μείωση φόρου που εισάγετε ισχύει ακέραιη για φορολογητέο εισόδημα έως 12.000€ και μειώνεται κατά 20€ για κάθε 1.000€ επιπλέον εισοδήματος — γι' αυτό υπολογίζεται αυτόματα ξανά για οποιοδήποτε μικτό μισθό βάλετε.</p><p>Τα δώρα/επίδομα υπολογίζονται αναλογικά με βάση τις ημέρες απασχόλησης εντός της αντίστοιχης περιόδου (1/5-31/12 για Χριστούγεννα και Επίδομα Αδείας, 1/1-30/4 για Πάσχα) και φορολογούνται με τον ίδιο μέσο συντελεστή του τακτικού μισθού.</p><p>Για τις πρόσθετες αμοιβές (υπερεργασία: ωρομίσθιο +20% · υπερωρία: ωρομίσθιο +40% · αργία: μόνο η προσαύξηση 75% του ωρομισθίου, αφού η βασική αμοιβή της ημέρας καλύπτεται ήδη από τον μηνιαίο μισθό — όπου ωρομίσθιο = μικτός μισθός/25/6,667), το μικτό ποσό τους προστίθεται στον μηνιαίο μισθό και το σύνολο φορολογείται και ασφαλίζεται μαζί μέσω της ίδιας προοδευτικής κλίμακας — επιβεβαιωμένο βάσει πραγματικής μισθοδοσίας. Το καθαρό ποσό πρόσθετων αμοιβών που εμφανίζεται είναι η οριακή διαφορά που προσθέτουν στο συνολικό καθαρό, όχι ξεχωριστός υπολογισμός.</p><p>Για να διατηρήσετε ακέραιη τη μείωση φόρου, θυμηθείτε ότι απαιτείται να καλύψετε το αντίστοιχο ποσό ηλεκτρονικών συναλλαγών (κάρτες/e-banking) μέσα στο έτος. Η ακριβής μισθοδοσία σας ενδέχεται να διαφέρει ελαφρώς — για ακριβή στοιχεία συμβουλευτείτε τον υπεύθυνο μισθοδοσίας σας.</p>",
+  "note93": "<p>Ενδεικτικός υπολογισμός με βάση την ισχύουσα φορολογική κλίμακα μισθωτών, η οποία διαφοροποιείται ανάλογα με την ηλικία: <strong>άνω των 30</strong> — 9% έως 10.000€ · 20% από 10.000,01 έως 20.000€ · 26% από 20.000,01 έως 30.000€ · 34% από 30.000,01 έως 40.000€ · 39% από 40.000,01 έως 60.000€ · 44% άνω των 60.000€. <strong>26 έως 30 ετών</strong> — 9% flat έως 20.000€, μετά ίδιο με την βασική κλίμακα (26%/34%/39%/44%). <strong>Έως 25 ετών</strong> — μηδενικός φόρος έως 20.000€, μετά ίδιο με την βασική κλίμακα. Η επιλογή ηλικίας δεν επηρεάζει τις κρατήσεις ΕΦΚΑ ή τη μείωση φόρου, μόνο την κλίμακα φόρου.</p><p>Η ετήσια μείωση φόρου που εισάγετε ισχύει ακέραιη για φορολογητέο εισόδημα έως 12.000€ και μειώνεται κατά 20€ για κάθε 1.000€ επιπλέον εισοδήματος — γι' αυτό υπολογίζεται αυτόματα ξανά για οποιοδήποτε μικτό μισθό βάλετε.</p><p>Τα δώρα/επίδομα υπολογίζονται αναλογικά με βάση τις ημέρες απασχόλησης εντός της αντίστοιχης περιόδου (1/5-31/12 για Χριστούγεννα και Επίδομα Αδείας, 1/1-30/4 για Πάσχα) και φορολογούνται με τον ίδιο μέσο συντελεστή του τακτικού μισθού.</p><p>Για τις πρόσθετες αμοιβές (υπερεργασία: ωρομίσθιο +20% · υπερωρία: ωρομίσθιο +40% · αργία: μόνο η προσαύξηση 75% του ωρομισθίου, αφού η βασική αμοιβή της ημέρας καλύπτεται ήδη από τον μηνιαίο μισθό — όπου ωρομίσθιο = μικτός μισθός/25/6,667), το μικτό ποσό τους προστίθεται στον μηνιαίο μισθό για τον υπολογισμό του φόρου (μέσω της ίδιας προοδευτικής κλίμακας), αλλά εξαιρείται από τη βάση υπολογισμού ΕΦΚΑ — σύμφωνα με το άρθρο 41 του Ν.5184/2025 (όπως τροποποιήθηκε με το άρθρο 73 του Ν.5239/2025) για εργαζόμενους πλήρους απασχόλησης. Το καθαρό ποσό πρόσθετων αμοιβών που εμφανίζεται είναι η οριακή διαφορά που προσθέτουν στο συνολικό καθαρό, όχι ξεχωριστός υπολογισμός.</p><p>Για να διατηρήσετε ακέραιη τη μείωση φόρου, θυμηθείτε ότι απαιτείται να καλύψετε το αντίστοιχο ποσό ηλεκτρονικών συναλλαγών (κάρτες/e-banking) μέσα στο έτος. Η ακριβής μισθοδοσία σας ενδέχεται να διαφέρει ελαφρώς — για ακριβή στοιχεία συμβουλευτείτε τον υπεύθυνο μισθοδοσίας σας.</p>",
   "h238": "<span class=\"num\">2</span> Προσωπικός Προϋπολογισμός",
   "lbl18": "Μηνιαίο καθαρό εισόδημα <span style=\"font-weight:400;\">(συμπληρώνεται αυτόματα από τον καθαρό μηνιαίο μισθό — μπορείτε να το αλλάξετε)</span>",
   "unit112": "€",
@@ -301,7 +301,7 @@ const TRANSLATIONS = {
   "th133": "Net",
   "th134": "Annual Picture (14 salaries)",
   "th135": "Amount",
-  "note93": "<p>Indicative calculation based on the current employee tax scale, which varies by age: <strong>over 30</strong> -- 9% up to EUR10,000, 20% from EUR10,000.01 to EUR20,000, 26% from EUR20,000.01 to EUR30,000, 34% from EUR30,000.01 to EUR40,000, 39% from EUR40,000.01 to EUR60,000, 44% above EUR60,000. <strong>26 to 30 years old</strong> -- flat 9% up to EUR20,000, then same as the base scale (26%/34%/39%/44%). <strong>Up to 25 years old</strong> -- zero tax up to EUR20,000, then same as the base scale. The age selection only affects the tax scale, not social security contributions or the tax credit.</p><p>The annual tax credit you enter applies in full for taxable income up to EUR12,000 and decreases by EUR20 for every EUR1,000 of extra income -- that is why it is automatically recalculated for whatever gross salary you enter.</p><p>Bonuses/allowances are calculated proportionally based on days employed within the relevant period (5/1 to 12/31 for the Christmas bonus and Leave Allowance, 1/1 to 4/30 for Easter) and are taxed at the same average rate as the regular salary.</p><p>For extra pay (overwork: hourly rate +20%, overtime: hourly rate +40%, holiday work: only the 75% supplement, since the base pay for that day is already covered by the monthly salary -- where hourly rate = gross salary / 25 / 6.667), the gross amount is added to the monthly salary and the combined total is taxed and insured together through the same progressive scale -- confirmed against a real payslip. The net amount shown for extra pay is the marginal difference it adds to the total net, not a separate calculation.</p><p>To keep the full tax credit, remember you need to cover the corresponding amount in electronic payments (cards/e-banking) during the year. Your actual payroll may differ slightly -- for exact figures, consult your payroll department.</p>",
+  "note93": "<p>Indicative calculation based on the current employee tax scale, which varies by age: <strong>over 30</strong> -- 9% up to EUR10,000, 20% from EUR10,000.01 to EUR20,000, 26% from EUR20,000.01 to EUR30,000, 34% from EUR30,000.01 to EUR40,000, 39% from EUR40,000.01 to EUR60,000, 44% above EUR60,000. <strong>26 to 30 years old</strong> -- flat 9% up to EUR20,000, then same as the base scale (26%/34%/39%/44%). <strong>Up to 25 years old</strong> -- zero tax up to EUR20,000, then same as the base scale. The age selection only affects the tax scale, not social security contributions or the tax credit.</p><p>The annual tax credit you enter applies in full for taxable income up to EUR12,000 and decreases by EUR20 for every EUR1,000 of extra income -- that is why it is automatically recalculated for whatever gross salary you enter.</p><p>Bonuses/allowances are calculated proportionally based on days employed within the relevant period (5/1 to 12/31 for the Christmas bonus and Leave Allowance, 1/1 to 4/30 for Easter) and are taxed at the same average rate as the regular salary.</p><p>For extra pay (overwork: hourly rate +20%, overtime: hourly rate +40%, holiday work: only the 75% supplement, since the base pay for that day is already covered by the monthly salary -- where hourly rate = gross salary / 25 / 6.667), the gross amount is added to the monthly salary for tax purposes (through the same progressive scale), but is excluded from the EFKA contribution base -- per Article 41 of Law 5184/2025 (as amended by Article 73 of Law 5239/2025) for full-time employees. The net amount shown for extra pay is the marginal difference it adds to the total net, not a separate calculation.</p><p>To keep the full tax credit, remember you need to cover the corresponding amount in electronic payments (cards/e-banking) during the year. Your actual payroll may differ slightly -- for exact figures, consult your payroll department.</p>",
   "h238": "<span class=\"num\">2</span> Personal Budget",
   "lbl18": "Net Monthly Income <span style=\"font-weight:400;\">(auto-filled from net monthly salary -- you can change it)</span>",
   "unit112": "€",
@@ -1119,8 +1119,9 @@ function effectiveTaxCredit(baseCredit, annualTaxable){
   return Math.max(r2(baseCredit - reduction), 0);
 }
 
-function netFromGross(gross, ssRatePct, baseTaxCredit, ageBracket){
-  const ss = r2(gross * (ssRatePct/100));
+function netFromGross(gross, ssRatePct, baseTaxCredit, ageBracket, ssBase){
+  if(ssBase === undefined) ssBase = gross;
+  const ss = r2(ssBase * (ssRatePct/100));
   const taxable = Math.max(r2(gross - ss), 0);
   const annualTaxable = r2(taxable * 14);
   const grossAnnualTax = annualTax(annualTaxable, ageBracket);
@@ -1147,10 +1148,13 @@ function recomputeSalary(){
   const netRatio = gross > 0 ? net/gross : 0;
 
   // --- Extra hour-based pay: overwork / holiday / overtime ---
-  // Confirmed against a real payslip: ΕΦΚΑ and income tax are calculated on the
-  // COMBINED total (regular salary + extra hours), through the same progressive
-  // scale (annualized ×14) as the regular salary — NOT a separate flat rate with
-  // no EFKA. Hourly wage derived as gross/25 (daily) /6.667 (hours/day).
+  // Per Άρθρο 41 Ν.5184/2025 (as amended by Άρθρο 73 Ν.5239/2025) and e-ΕΦΚΑ
+  // circulars 8/2025 & 21/2025: these premiums are exempt from EFKA contributions
+  // (employee & employer) for full-time employees. This exemption is confirmed by
+  // the Ministry of Labour and multiple independent payroll/tax sources. Income
+  // tax is NOT exempted -- it still applies on the combined total through the
+  // same progressive scale, just computed on a taxable base where EFKA itself is
+  // only subtracted for the regular salary portion.
   const overworkHours = parseFloat(document.getElementById('overworkHours').value)||0;
   const holidayHours = parseFloat(document.getElementById('holidayHours').value)||0;
   const overtimeHours = parseFloat(document.getElementById('overtimeHours').value)||0;
@@ -1158,7 +1162,7 @@ function recomputeSalary(){
   const hourlyWage = gross/25/6.667;
   const extraGross = overworkHours*hourlyWage*1.20 + holidayHours*hourlyWage*0.75 + overtimeHours*hourlyWage*1.40;
 
-  const combinedCalc = netFromGross(gross + extraGross, ssRate, taxCredit, ageBracket);
+  const combinedCalc = netFromGross(gross + extraGross, ssRate, taxCredit, ageBracket, gross);
   const extraPayNet = r2(combinedCalc.net - net);
   const netTotal = combinedCalc.net;
 
