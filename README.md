@@ -27,13 +27,23 @@ Landing on the site opens a **dashboard** with five live summary cards — tap a
 - Tap a card to open the full tab; a home icon in the tab bar always brings you back
 
 ### Salary & Bonuses
+Three employment types, selectable from a single dropdown — each shows only the fields and results relevant to it:
+
+**Salaried (14 or 12 payments)**
 - Net salary calculation from gross, using the current Greek employee tax scale, with three age-based brackets:
   - Over 30 (standard scale)
   - 26–30 years old (flat 9% up to €20,000, then standard scale)
   - Up to 25 years old (0% tax up to €20,000, then standard scale)
-- Christmas bonus, Easter bonus, and leave allowance, prorated automatically by hire date
-- Overwork (+20%), overtime (+40%), and holiday-work (+75% supplement) extra pay, combined with the regular salary and taxed/insured together through the same progressive scale (confirmed against a real payslip)
+- An insurance-category selector (standard / heavy & unhealthy occupations / underground & underwater work) auto-fills the EFKA contribution rate, still editable manually
+- Christmas bonus, Easter bonus, and leave allowance, prorated automatically by hire date (14-payment system only — hidden entirely for 12-payment employees, who have no such bonuses)
+- Overwork (+20%), overtime (+40%), and holiday-work (+75% supplement) extra pay, taxed together with the regular salary through the same progressive scale but **exempt from EFKA contributions** for full-time employees (per Law 5184/2025, confirmed against the Ministry of Labour and multiple independent payroll sources)
 - Annual tax credit tapering (€777 base, reduced €20 per €1,000 of income above €12,000)
+
+**Self-Employed / Freelancer** *(indicative v1 — see disclaimer below)*
+- EFKA as a fixed monthly amount per insurance category (not a percentage of income) — six standard categories plus a reduced "new professional" category for the first 5 years
+- Income tax using the same bracket scale and tax-credit mechanism as employees (extended to the self-employed for the first time from the 2026 tax year), applied directly to annual net profit — no 12x/14x annualization
+- Advance tax payment for the following year (55% standard, 27.5% in the taxpayer's first year of activity)
+- **Does not model:** presumptive/imputed minimum income ("τεκμαρτό"), special-category exemptions (taxi drivers, small settlements, "blokaki" contractors, disability), or VAT — clearly noted on screen
 
 ### Budget
 - Personal monthly budget: income, fixed expenses, available balance
@@ -90,7 +100,7 @@ playwright install chromium
 python tests/qa_tests.py
 ```
 
-See [TECHNICAL.md](TECHNICAL.md) for what each check covers.
+See [TECHNICAL.md](TECHNICAL.md) for what each check covers — including a known coverage gap around the 12-payment/freelancer employment-type paths, added after the suite was last extended.
 
 ## Technical documentation
 

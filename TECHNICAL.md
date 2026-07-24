@@ -26,7 +26,8 @@ index.html
   - Tab panels:
       Hub    -> 5 live summary cards (Salary, Budget, Investments, Vehicle, Loan),
                each a clickable shortcut into its own tab
-      Salary -> net salary, bonuses, extra hours
+      Salary -> net salary, bonuses, extra hours; branches into three
+               employment-type modes (see Section 4.13)
       Budget -> personal budget, reserve fund
       Invest -> compound-interest calculator (its own tab, previously nested in Budget)
       Moto   -> vehicle expenses (fixed + operating), independent of loan status
@@ -216,6 +217,59 @@ The Budget tab's own "Total Monthly Vehicle Cost" box (`fMotoTotal`) intentional
 
 Reusing that same combined figure elsewhere (the Hub card, the print report) turned out to double-count the loan: both a standalone "Loan" section/card *and* a "Vehicle Expenses" section/card would each show a number that included the same payment, with no adjacent line to clarify it. Fixed by tracking a second global, `lastPureVehicleCost = fixedMonthlyEquiv + variableMonthly` (no loan), and using *that* for any context where the vehicle total is shown without its loan figure directly alongside it. The lesson: a combined total is only safe to reuse in the exact layout context that justified combining it in the first place — anywhere else, use the disaggregated figure.
 
+### 4.13 Employment type branching (salaried 14 / salaried 12 / freelancer)
+A single `employmentType` dropdown (`salaried14` / `salaried12` / `freelancer`) drives which fields and results are shown in the Salary tab, via a set of container toggles in `recomputeSalary()` rather than three separate tabs:
+```
+salariedOnlyFields   -> gross salary, hire date, insurance category, EFKA %
+extraHoursFields     -> overwork/overtime/holiday hours, extra net (shared by
+                        both salaried modes, hidden for freelancer)
+freelancerOnlyFields -> average monthly profit, EFKA category, first-year checkbox
+salariedResults / freelancerResults / annualTableWrap / freelancerNote
+                     -> corresponding result panels
+```
+`taxCredit` and `ageBracket` are **shared** across all three modes (deliberately kept outside any mode-specific wrapper) since the tax-credit and bracket-selection mechanics are identical for employees and freelancers alike (Section 4.14).
+
+**A real bug this produced:** an early version accidentally left the wrapper's closing `</div>` too far down the markup, so `taxCredit` and `ageBracket` ended up *inside* `salariedOnlyFields` and were hidden entirely in freelancer mode -- silently falling back to their default values with no way for the user to change them. The calculation wasn't numerically wrong (the hidden fields still held valid defaults, so the arithmetic worked), but the feature was still broken from the user's perspective, since age materially changes a freelancer's tax bracket. Caught by a user testing the actual UI, not by the automated test suite -- see the coverage gap noted in Section 9. The general lesson: a "shared" field must be verified to sit *outside* every mode-specific wrapper, not just declared shared in a comment; grep the actual opening/closing tag pairing rather than trusting the visual indentation.
+
+### 4.14 Freelancer / self-employed calculation (v1 scope)
+Structurally different from salaried pay: EFKA is a **fixed monthly amount per category**, not a percentage of income, and there is no 14x/12x annualization -- the annual net profit already *is* the annual taxable base (after subtracting annual EFKA, which is deductible).
+```
+annualProfit  = monthlyProfit x 12
+annualEfka    = efkaCategoryRate x 12          (fixed amount, category-selected)
+taxable       = max(annualProfit - annualEfka, 0)
+grossTax      = bracket_tax(taxable, ageBracket)     -- same brackets as Section 4.2
+usedCredit    = effectiveTaxCredit(baseCredit, taxable)  -- same mechanism as Section 4.3
+finalTax      = max(grossTax - usedCredit, 0)
+netMonthly    = monthlyProfit - efkaCategoryRate - finalTax/12
+```
+Confirmed via web search (Ministry of Labour + tax-advisory sources) that as of the 2026 tax year, self-employed profit is taxed through the **same bracket scale and the same tax-credit mechanism** as employees -- previously employees-only. This let the existing `annualTax()` and `effectiveTaxCredit()` functions be reused directly rather than needing a parallel implementation.
+
+EFKA categories (fixed EUR/month, confirmed against the Ministry of Labour page): 1st EUR185.09, 2nd EUR222.12, 3rd EUR281.82, 4th EUR354.66, 5th EUR440.64, 6th EUR597.06, plus a reduced "new professional" category (EUR111.06/month, first 5 years).
+
+**Advance tax payment** (`prokatavoli`), a real cash-flow consideration specific to the self-employed, is calculated at the confirmed standard rates:
+```
+advanceTax = finalTax x (isFirstYear ? 0.275 : 0.55)
+```
+55% is the standard rate for individuals/sole proprietors; 27.5% (half) applies in the taxpayer's first year of activity, per a first-year checkbox in the UI. Both rates were cross-checked against several independent tax-advisory sources before being hard-coded.
+
+**Explicitly out of v1 scope** (surfaced to the user via an on-screen note, not silently ignored):
+- Presumptive/imputed minimum income ("τεκμαρτό εισόδημα") -- a separate, frequently-changing minimum-income presumption system
+- Special-category exemptions (taxi drivers, small-settlement businesses, "blokaki" contractors with <=3 clients, 80%+ disability, etc.)
+- VAT
+- Any advance-tax reduction/exemption beyond the standard first-year halving
+
+### 4.15 Reusable info-icon / popover pattern
+A small `.info-icon` (a "little i" glyph) paired with a `.info-popover` (hidden by default, toggled via an `open` class) is used for supplementary explanations that don't fit inline in a label -- first introduced for the insurance-category dropdown, written generically enough to reuse anywhere else a short explanatory aside is needed.
+
+Toggling is handled by two **delegated** listeners on `document` (click and keydown), rather than listeners attached directly to each icon element:
+```
+document.addEventListener('click', e => { ...toggle the popover matching e.target.closest('.info-icon')... });
+document.addEventListener('keydown', e => { ...same, for Enter/Space... });
+```
+Delegation matters here for the same reason noted in Section 5's "known trap": if a listener were attached directly to an icon element found at load time, it would be silently lost the moment that element's *ancestor* gets its `innerHTML` replaced by a language switch (a fresh DOM node replaces the old one, listeners and all). Delegating from `document` means the check happens at click-time against whatever is currently in the DOM, so it survives translation swaps for free.
+
+**A real bug this produced:** the icon was initially placed *inside* the `<label for="...">` it annotated. Clicking anywhere inside a `<label>` also fires a synthetic click on the labeled form control (this is standard browser behavior, not a bug in our code) -- which bubbles to the same document-level listener a moment later, gets treated as "clicked outside the popover," and immediately closes the popover that had just been opened by the first click. Fixed by moving the icon to be a *sibling* of the label rather than a child of it.
+
 ---
 
 ## 5. Internationalization (i18n)
@@ -250,6 +304,8 @@ Applied bounds: percentages capped 0-100 (interest rate, EFKA rate, savings %, i
 - No persistence — there is intentionally no save/load mechanism (removed by design once the print report existed as an alternative); each session starts from defaults.
 - Loan prepayment assumes no fees/insurance/early-repayment penalties.
 - A ~1-cent discrepancy occasionally appears in some display splits, sourced from floating-point rounding order differences versus an independent reference implementation; it does not affect final totals and has been reproduced and judged negligible.
+- Freelancer/self-employed mode (Section 4.14) is explicitly v1 scope: no presumptive/imputed income, no special-category exemptions, no VAT, and the advance-tax calculation uses only the two standard rates (55% / 27.5% first-year) with no further reductions modeled.
+- The insurance-category dropdown (Section 4.13's `salariedOnlyFields`) offers a small fixed set of categories (standard, heavy/unhealthy, underground/underwater); it isn't an exhaustive list of every EFKA sub-category, and the "adjust manually" option exists precisely because of that.
 
 ---
 
@@ -273,6 +329,8 @@ Repository includes an MIT `LICENSE` and a small footer signature/attribution li
 - Hub dashboard default view and card-to-tab navigation
 - Horizontal-overflow-free rendering at 320/375/412px, in both languages, across every tab
 - Input clamping (Section 6)
+
+**Known coverage gap:** the suite does not yet exercise the three-way employment-type branching (Section 4.13) -- the 12-salary annualization, the insurance-category auto-fill, or any part of the freelancer calculation (Section 4.14) -- since these were added after the suite was last extended. The wrapper-scoping bug described in Section 4.13 was caught by manual testing, not by this suite, which is exactly the kind of regression an automated check should catch going forward. Extending the suite to cover all three employment-type paths is the most valuable next addition to it.
 
 Run it with:
 ```
