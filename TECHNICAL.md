@@ -244,7 +244,11 @@ netMonthly    = monthlyProfit - efkaCategoryRate - finalTax/12
 ```
 Confirmed via web search (Ministry of Labour + tax-advisory sources) that as of the 2026 tax year, self-employed profit is taxed through the **same bracket scale and the same tax-credit mechanism** as employees -- previously employees-only. This let the existing `annualTax()` and `effectiveTaxCredit()` functions be reused directly rather than needing a parallel implementation.
 
-EFKA categories (fixed EUR/month, confirmed against the Ministry of Labour page): 1st EUR185.09, 2nd EUR222.12, 3rd EUR281.82, 4th EUR354.66, 5th EUR440.64, 6th EUR597.06, plus a reduced "new professional" category (EUR111.06/month, first 5 years).
+**Renamed to "Blokaki" and switched to a gross-income input (a later revision):** the mode was renamed from "self-employed/freelancer" to "blokaki" (ΔΠΥ taxed as employee), and the input switched from *net profit* to *gross income*, since blokaki-as-employee doesn't allow business-expense deduction. A calculation-direction toggle now supports both **gross → net** (direct) and **net → gross** (the inverse has no closed form given the progressive bracket + tapering credit, so `blokakiGrossFromNet` solves it via 60 rounds of bisection — safe because net(gross) is monotonically non-decreasing).
+
+EFKA categories, corrected (fixed EUR/month, confirmed against e-EFKA circular 6/2026 and cross-checked against two independent blokaki-specific calculators): Special/new-professional EUR156.79, 1st EUR254.65, 2nd EUR303.59, 3rd EUR361.84, 4th EUR432.90, 5th EUR516.78, 6th EUR669.39. **A prior version of this table was wrong** — it only included the main-pension (κύρια σύνταξη) component and omitted healthcare (υγειονομική περίθαλψη) and the unemployment fund contribution (ΔΥΠΑ, a flat €10), understating every category by roughly €70-95/month. Caught by cross-referencing a third-party blokaki calculator against the raw government circular breakdown for one category (Special: €111.06 pension + €39.40 healthcare + €10 unemployment = €160.46, matching the calculator's €156.79 closely) before trusting either source alone.
+
+An eighth EFKA option was added: **8.72% of the gross fee**, for the common arrangement where the client/employer remits the contribution on the contractor's behalf rather than the contractor paying a fixed category amount themselves. Structurally this is just a second EFKA mode (percentage-of-income instead of fixed-per-month) plugged into the same `blokakiCalc`/`blokakiGrossFromNet` functions via an `efkaConfig` object (`{type:'fixed', amount}` or `{type:'percent', rate}`) — everything downstream (tax bracket, credit, advance payment) is unchanged.
 
 **Advance tax payment** (`prokatavoli`), a real cash-flow consideration specific to the self-employed, is calculated at the confirmed standard rates:
 ```
@@ -316,6 +320,8 @@ Hosted on GitHub Pages (`main` branch, root). SEO surface: descriptive `<title>`
 The visible on-page intro text and the `<meta description>` are deliberately different: the former is short and brand-toned (what a human reader sees first), the latter stays keyword-dense within its display budget (what a search engine surfaces). Changing one doesn't require changing the other.
 
 Repository includes an MIT `LICENSE` and a small footer signature/attribution line, added once the project moved from a private tool to something publicly hosted.
+
+**Browser caching:** `style.css` and `script.js` are referenced with a version query string (`style.css?v=YYYYMMDD`) rather than a bare filename. Without this, a returning visitor's browser can keep serving an old cached copy of these files indefinitely after an update — clearing cookies does **not** clear the browser's file cache, so "I cleared my cookies and it's still broken" is a real, confusing symptom of this exact issue (confirmed: incognito mode, which starts with an empty cache, showed the update correctly while the same browser's normal window did not). Bump the version string whenever `style.css` or `script.js` changes in a way that matters to already-cached visitors.
 
 ---
 

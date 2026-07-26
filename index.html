@@ -451,15 +451,16 @@
                 <label for="freelancerCategory" data-i18n="lblFreelancerCategory" style="margin-bottom:0;">Ασφαλιστική Κατηγορία ΕΦΚΑ</label>
                 <span class="info-icon" tabindex="0" role="button" aria-label="Πληροφορίες" data-i18n-aria="ariaInfo" data-popover="freelancerCategoryInfo">ⓘ</span>
               </div>
-              <div class="info-popover" id="freelancerCategoryInfo" data-i18n="freelancerCategoryInfoText">Οι εργαζόμενοι με μπλοκάκι πληρώνουν ΕΦΚΑ ως σταθερό μηνιαίο ποσό ανά κατηγορία (όχι ποσοστό επί εισοδήματος), βάσει της επιλογής σας. Αν δεν επιλέξετε κατηγορία, ισχύει αυτόματα η 1η. Πηγή: Υπουργείο Εργασίας, τιμές 2026.</div>
+              <div class="info-popover" id="freelancerCategoryInfo" data-i18n="freelancerCategoryInfoText">Το πλήρες μηνιαίο ποσό ΕΦΚΑ (κύρια σύνταξη + υγειονομική περίθαλψη + ΔΥΠΑ ανεργίας) ανά κατηγορία, ή το ποσοστό όταν τις εισφορές τις καλύπτει ο εργοδότης/πελάτης σας. Αν δεν επιλέξετε, ισχύει αυτόματα η 1η. Πηγή: e-ΕΦΚΑ, τιμές 2026.</div>
               <select id="freelancerCategory" class="date-input" style="width:100%;">
-                <option value="185.09" selected data-i18n="fcat1">1η Κατηγορία (185,09€/μήνα)</option>
-                <option value="222.12" data-i18n="fcat2">2η Κατηγορία (222,12€/μήνα)</option>
-                <option value="281.82" data-i18n="fcat3">3η Κατηγορία (281,82€/μήνα)</option>
-                <option value="354.66" data-i18n="fcat4">4η Κατηγορία (354,66€/μήνα)</option>
-                <option value="440.64" data-i18n="fcat5">5η Κατηγορία (440,64€/μήνα)</option>
-                <option value="597.06" data-i18n="fcat6">6η Κατηγορία (597,06€/μήνα)</option>
-                <option value="111.06" data-i18n="fcat7">Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)</option>
+                <option value="pct:0.0872" data-i18n="fcatEmployer">8,72% της αμοιβής — καλύπτεται από τον εργοδότη</option>
+                <option value="156.79" selected data-i18n="fcat7">Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (156,79€/μήνα)</option>
+                <option value="254.65" data-i18n="fcat1">1η Κατηγορία (254,65€/μήνα)</option>
+                <option value="303.59" data-i18n="fcat2">2η Κατηγορία (303,59€/μήνα)</option>
+                <option value="361.84" data-i18n="fcat3">3η Κατηγορία (361,84€/μήνα)</option>
+                <option value="432.90" data-i18n="fcat4">4η Κατηγορία (432,90€/μήνα)</option>
+                <option value="516.78" data-i18n="fcat5">5η Κατηγορία (516,78€/μήνα)</option>
+                <option value="669.39" data-i18n="fcat6">6η Κατηγορία (669,39€/μήνα)</option>
               </select>
             </div>
 
@@ -514,7 +515,7 @@
               <div class="value" id="fpAnnualProfit">—</div>
             </div>
             <div class="result-box deduction">
-              <div class="label" data-i18n="freslbl2">ΕΦΚΑ <span style="font-weight:400;">(σταθερό/μήνα)</span></div>
+              <div class="label" data-i18n="freslbl2">ΕΦΚΑ <span style="font-weight:400;">(μηνιαίο)</span></div>
               <div class="value" id="fpEfkaMonthly">—</div>
             </div>
             <div class="result-box">

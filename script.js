@@ -96,16 +96,17 @@ const TRANSLATIONS = {
   "freslblGrossMonthly": "Μεικτό μηνιαίο εισόδημα",
   "unit112": "€",
   "lblFreelancerCategory": "Ασφαλιστική Κατηγορία ΕΦΚΑ",
-  "freelancerCategoryInfoText": "Οι ελεύθεροι επαγγελματίες πληρώνουν ΕΦΚΑ ως σταθερό μηνιαίο ποσό ανά κατηγορία (όχι ποσοστό επί εισοδήματος), βάσει της επιλογής σας. Αν δεν επιλέξετε κατηγορία, ισχύει αυτόματα η 1η. Πηγή: Υπουργείο Εργασίας, τιμές 2026.",
-  "fcat1": "1η Κατηγορία (185,09€/μήνα)",
-  "fcat2": "2η Κατηγορία (222,12€/μήνα)",
-  "fcat3": "3η Κατηγορία (281,82€/μήνα)",
-  "fcat4": "4η Κατηγορία (354,66€/μήνα)",
-  "fcat5": "5η Κατηγορία (440,64€/μήνα)",
-  "fcat6": "6η Κατηγορία (597,06€/μήνα)",
-  "fcat7": "Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)",
+  "freelancerCategoryInfoText": "Το πλήρες μηνιαίο ποσό ΕΦΚΑ (κύρια σύνταξη + υγειονομική περίθαλψη + ΔΥΠΑ ανεργίας) ανά κατηγορία, ή το ποσοστό όταν τις εισφορές τις καλύπτει ο εργοδότης/πελάτης σας. Αν δεν επιλέξετε, ισχύει αυτόματα η 1η. Πηγή: e-ΕΦΚΑ, τιμές 2026.",
+  "fcatEmployer": "8,72% της αμοιβής — καλύπτεται από τον εργοδότη",
+  "fcat1": "1η Κατηγορία (254,65€/μήνα)",
+  "fcat2": "2η Κατηγορία (303,59€/μήνα)",
+  "fcat3": "3η Κατηγορία (361,84€/μήνα)",
+  "fcat4": "4η Κατηγορία (432,90€/μήνα)",
+  "fcat5": "5η Κατηγορία (516,78€/μήνα)",
+  "fcat6": "6η Κατηγορία (669,39€/μήνα)",
+  "fcat7": "Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (156,79€/μήνα)",
   "freslbl1": "Ετήσιο μεικτό εισόδημα",
-  "freslbl2": "ΕΦΚΑ <span style=\"font-weight:400;\">(σταθερό/μήνα)</span>",
+  "freslbl2": "ΕΦΚΑ <span style=\"font-weight:400;\">(μηνιαίο)</span>",
   "freslbl3": "Φορολογητέο εισόδημα <span style=\"font-weight:400;\">(ετήσιο, μετά ΕΦΚΑ)</span>",
   "freslbl4": "Αρχικός φόρος κλίμακας",
   "freslbl5": "Μείωση φόρου",
@@ -320,16 +321,17 @@ const TRANSLATIONS = {
   "freslblGrossMonthly": "Gross Monthly Income",
   "unit112": "€",
   "lblFreelancerCategory": "EFKA Insurance Category",
-  "freelancerCategoryInfoText": "Self-employed workers pay EFKA as a fixed monthly amount per category (not a percentage of income), based on your selection. If you don't select a category, the 1st applies by default. Source: Ministry of Labour, 2026 amounts.",
-  "fcat1": "Category 1 (€185.09/month)",
-  "fcat2": "Category 2 (€222.12/month)",
-  "fcat3": "Category 3 (€281.82/month)",
-  "fcat4": "Category 4 (€354.66/month)",
-  "fcat5": "Category 5 (€440.64/month)",
-  "fcat6": "Category 6 (€597.06/month)",
-  "fcat7": "Special — new professionals, first 5 years (€111.06/month)",
+  "freelancerCategoryInfoText": "The full monthly EFKA amount (main pension + healthcare + unemployment fund) per category, or the percentage when your employer/client covers the contribution. If you don't select one, the 1st applies by default. Source: e-EFKA, 2026 amounts.",
+  "fcatEmployer": "8.72% of the fee \u2014 covered by the employer",
+  "fcat1": "Category 1 (\u20ac254.65/month)",
+  "fcat2": "Category 2 (\u20ac303.59/month)",
+  "fcat3": "Category 3 (\u20ac361.84/month)",
+  "fcat4": "Category 4 (\u20ac432.90/month)",
+  "fcat5": "Category 5 (\u20ac516.78/month)",
+  "fcat6": "Category 6 (\u20ac669.39/month)",
+  "fcat7": "Special \u2014 new professionals, first 5 years (\u20ac156.79/month)",
   "freslbl1": "Annual Gross Income",
-  "freslbl2": "EFKA <span style=\"font-weight:400;\">(fixed/month)</span>",
+  "freslbl2": "EFKA <span style=\"font-weight:400;\">(monthly)</span>",
   "freslbl3": "Taxable Income <span style=\"font-weight:400;\">(annual, after EFKA)</span>",
   "freslbl4": "Initial Bracket Tax",
   "freslbl5": "Tax Credit",
@@ -1193,18 +1195,21 @@ function effectiveTaxCredit(baseCredit, annualTaxable){
   return Math.max(r2(baseCredit - reduction), 0);
 }
 
-// Blokaki (ΔΠΥ taxed as employee): gross monthly income in, fixed monthly EFKA
-// category deducted, tax on the annualized (x12, no bonus structure) remainder
-// via the same bracket + credit mechanism used everywhere else in the tool.
-function blokakiCalc(grossMonthly, efkaCategoryRate, taxCreditBase, ageBracket){
+// Blokaki (ΔΠΥ taxed as employee): gross monthly income in, EFKA deducted
+// (either a fixed monthly category amount, or 8.72% of the fee when the
+// employer/client covers the contribution -- efkaConfig selects which),
+// tax on the annualized (x12, no bonus structure) remainder via the same
+// bracket + credit mechanism used everywhere else in the tool.
+function blokakiCalc(grossMonthly, efkaConfig, taxCreditBase, ageBracket){
   const annualGross = r2(grossMonthly*12);
-  const annualEfka = r2(efkaCategoryRate*12);
+  const efkaMonthly = efkaConfig.type === 'percent' ? r2(grossMonthly*efkaConfig.rate) : efkaConfig.amount;
+  const annualEfka = r2(efkaMonthly*12);
   const taxableIncome = Math.max(r2(annualGross-annualEfka),0);
   const grossTax = annualTax(taxableIncome, ageBracket);
   const usedCredit = effectiveTaxCredit(taxCreditBase, taxableIncome);
   const finalTax = Math.max(r2(grossTax-usedCredit),0);
-  const netMonthly = Math.max(r2(grossMonthly - efkaCategoryRate - finalTax/12),0);
-  return {annualGross, annualEfka, taxableIncome, grossTax, usedCredit, finalTax, netMonthly};
+  const netMonthly = Math.max(r2(grossMonthly - efkaMonthly - finalTax/12),0);
+  return {annualGross, annualEfka, efkaMonthly, taxableIncome, grossTax, usedCredit, finalTax, netMonthly};
 }
 
 // Inverse of the above: given a desired net monthly income, find the gross
@@ -1212,12 +1217,13 @@ function blokakiCalc(grossMonthly, efkaCategoryRate, taxCreditBase, ageBracket){
 // closed-form inverse (progressive brackets + a tapering credit), so this
 // solves it numerically via bisection -- netMonthly(gross) is monotonically
 // non-decreasing in gross, which is exactly the property bisection needs.
-function blokakiGrossFromNet(desiredNet, efkaCategoryRate, taxCreditBase, ageBracket){
+function blokakiGrossFromNet(desiredNet, efkaConfig, taxCreditBase, ageBracket){
+  const roughEfka = efkaConfig.type === 'percent' ? desiredNet*efkaConfig.rate : efkaConfig.amount;
   let low = desiredNet;
-  let high = desiredNet*2 + efkaCategoryRate*3 + 2000;
+  let high = desiredNet*2 + roughEfka*3 + 2000;
   for(let i=0; i<60; i++){
     const mid = (low+high)/2;
-    const {netMonthly} = blokakiCalc(mid, efkaCategoryRate, taxCreditBase, ageBracket);
+    const {netMonthly} = blokakiCalc(mid, efkaConfig, taxCreditBase, ageBracket);
     if(netMonthly < desiredNet) low = mid; else high = mid;
   }
   return r2((low+high)/2);
@@ -1284,7 +1290,10 @@ function recomputeSalary(){
     // criteria for being taxed as an employee are met; if not, full self-employed
     // rules apply instead (including presumptive/imputed minimum income), which
     // are out of scope here. VAT is also not modeled.
-    const freelancerCategoryRate = parseFloat(document.getElementById('freelancerCategory').value)||185.09;
+    const categoryRaw = document.getElementById('freelancerCategory').value;
+    const efkaConfig = categoryRaw.startsWith('pct:')
+      ? {type:'percent', rate: parseFloat(categoryRaw.slice(4))}
+      : {type:'fixed', amount: parseFloat(categoryRaw)||156.79};
     const calcDirection = document.querySelector('input[name="calcDirection"]:checked').value;
     const freelancerProfitField = document.getElementById('freelancerProfit');
     const enteredAmount = parseFloat(freelancerProfitField.value)||0;
@@ -1295,16 +1304,16 @@ function recomputeSalary(){
 
     let grossMonthly;
     if(calcDirection==='fromNet'){
-      grossMonthly = blokakiGrossFromNet(enteredAmount, freelancerCategoryRate, taxCredit, ageBracket);
+      grossMonthly = blokakiGrossFromNet(enteredAmount, efkaConfig, taxCredit, ageBracket);
     } else {
       grossMonthly = enteredAmount;
     }
 
-    const calc2 = blokakiCalc(grossMonthly, freelancerCategoryRate, taxCredit, ageBracket);
+    const calc2 = blokakiCalc(grossMonthly, efkaConfig, taxCredit, ageBracket);
 
     document.getElementById('fpGrossMonthly').textContent = euroDec(grossMonthly);
     document.getElementById('fpAnnualProfit').textContent = euroDec(calc2.annualGross);
-    document.getElementById('fpEfkaMonthly').textContent = '-' + euroDec(freelancerCategoryRate);
+    document.getElementById('fpEfkaMonthly').textContent = '-' + euroDec(calc2.efkaMonthly);
     document.getElementById('fpTaxable').textContent = euroDec(calc2.taxableIncome);
     document.getElementById('fpGrossTax').textContent = '-' + euroDec(calc2.grossTax);
     document.getElementById('fpCredit').textContent = '+' + euroDec(calc2.usedCredit);
