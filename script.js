@@ -88,8 +88,12 @@ const TRANSLATIONS = {
   "lblEmploymentType": "Καθεστώς Απασχόλησης",
   "empType14": "Μισθωτός (14 μισθοί)",
   "empType12": "Μισθωτός (12 μισθοί)",
-  "empTypeFreelancer": "Ελεύθερος Επαγγελματίας",
-  "lblFreelancerProfit": "Μέσο μηνιαίο καθαρό κέρδος <span style=\"font-weight:400;\">(έσοδα μείον επαγγελματικά έξοδα)</span>",
+  "empTypeFreelancer": "Μπλοκάκι",
+  "lblCalcDirection": "Υπολογισμός από",
+  "lblFromGross": "Μεικτά",
+  "lblFromNet": "Καθαρά",
+  "lblFreelancerGross": "Μεικτό μηνιαίο εισόδημα",
+  "freslblGrossMonthly": "Μεικτό μηνιαίο εισόδημα",
   "unit112": "€",
   "lblFreelancerCategory": "Ασφαλιστική Κατηγορία ΕΦΚΑ",
   "freelancerCategoryInfoText": "Οι ελεύθεροι επαγγελματίες πληρώνουν ΕΦΚΑ ως σταθερό μηνιαίο ποσό ανά κατηγορία (όχι ποσοστό επί εισοδήματος), βάσει της επιλογής σας. Αν δεν επιλέξετε κατηγορία, ισχύει αυτόματα η 1η. Πηγή: Υπουργείο Εργασίας, τιμές 2026.",
@@ -100,7 +104,7 @@ const TRANSLATIONS = {
   "fcat5": "5η Κατηγορία (440,64€/μήνα)",
   "fcat6": "6η Κατηγορία (597,06€/μήνα)",
   "fcat7": "Ειδική — νέοι επαγγελματίες, πρώτα 5 έτη (111,06€/μήνα)",
-  "freslbl1": "Ετήσιο καθαρό κέρδος",
+  "freslbl1": "Ετήσιο μεικτό εισόδημα",
   "freslbl2": "ΕΦΚΑ <span style=\"font-weight:400;\">(σταθερό/μήνα)</span>",
   "freslbl3": "Φορολογητέο εισόδημα <span style=\"font-weight:400;\">(ετήσιο, μετά ΕΦΚΑ)</span>",
   "freslbl4": "Αρχικός φόρος κλίμακας",
@@ -109,7 +113,7 @@ const TRANSLATIONS = {
   "freslbl7": "Καθαρό μηνιαίο εισόδημα",
   "freslbl8": "Προκαταβολή φόρου <span style=\"font-weight:400;\">(για το επόμενο έτος)</span>",
   "lblFirstYear": "Πρώτο έτος επαγγελματικής δραστηριότητας <span style=\"font-weight:400;\">(μειωμένη προκαταβολή φόρου)</span>",
-  "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός. <strong>Δεν περιλαμβάνει:</strong> τεκμαρτό εισόδημα (ελάχιστο πλασματικό εισόδημα), ειδικές εξαιρέσεις (π.χ. ΤΑΞΙ, μικροί οικισμοί, \"μπλοκάκι\", αναπηρία 80%+), ή ΦΠΑ. Η προκαταβολή φόρου υπολογίζεται με τα τυπικά ποσοστά (55% κανονικά, 27,5% το πρώτο έτος) — ενδέχεται να διαφέρει σε ειδικές περιπτώσεις (π.χ. πρόσθετες μειώσεις/εξαιρέσεις). Συμβουλευτείτε λογιστή για την ακριβή εικόνα σας.</p>",
+  "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός για μπλοκάκι. Υποθέτει ότι πληρούνται τα κριτήρια φορολόγησης ως μισθωτός (έως 3 εργοδότες, ελευθέριο επάγγελμα, έδρα στην κατοικία, καμία άλλη μισθωτή εργασία στο έτος) — αν χάνεται έστω ένα κριτήριο, ισχύουν οι κανόνες πλήρους ελεύθερου επαγγελματία (με τεκμαρτό εισόδημα), που <strong>δεν</strong> καλύπτονται εδώ. Επίσης δεν περιλαμβάνεται ΦΠΑ. Η προκαταβολή φόρου υπολογίζεται με τα τυπικά ποσοστά (55% κανονικά, 27,5% το πρώτο έτος). Συμβουλευτείτε λογιστή για την ακριβή εικόνα σας.</p>",
   "unit105": "€",
   "lbl10": "Ημερομηνία πρόσληψης",
   "lblSsCategory": "Ασφαλιστική Κατηγορία",
@@ -308,8 +312,12 @@ const TRANSLATIONS = {
   "lblEmploymentType": "Employment Type",
   "empType14": "Salaried (14 payments)",
   "empType12": "Salaried (12 payments)",
-  "empTypeFreelancer": "Self-Employed / Freelancer",
-  "lblFreelancerProfit": "Average monthly net profit <span style=\"font-weight:400;\">(revenue minus business expenses)</span>",
+  "empTypeFreelancer": "Blokaki (ΔΠΥ)",
+  "lblCalcDirection": "Calculate from",
+  "lblFromGross": "Gross",
+  "lblFromNet": "Net",
+  "lblFreelancerGross": "Gross monthly income",
+  "freslblGrossMonthly": "Gross Monthly Income",
   "unit112": "€",
   "lblFreelancerCategory": "EFKA Insurance Category",
   "freelancerCategoryInfoText": "Self-employed workers pay EFKA as a fixed monthly amount per category (not a percentage of income), based on your selection. If you don't select a category, the 1st applies by default. Source: Ministry of Labour, 2026 amounts.",
@@ -320,7 +328,7 @@ const TRANSLATIONS = {
   "fcat5": "Category 5 (€440.64/month)",
   "fcat6": "Category 6 (€597.06/month)",
   "fcat7": "Special — new professionals, first 5 years (€111.06/month)",
-  "freslbl1": "Annual Net Profit",
+  "freslbl1": "Annual Gross Income",
   "freslbl2": "EFKA <span style=\"font-weight:400;\">(fixed/month)</span>",
   "freslbl3": "Taxable Income <span style=\"font-weight:400;\">(annual, after EFKA)</span>",
   "freslbl4": "Initial Bracket Tax",
@@ -329,7 +337,7 @@ const TRANSLATIONS = {
   "freslbl7": "Net Monthly Income",
   "freslbl8": "Advance Tax Payment <span style=\"font-weight:400;\">(for next year)</span>",
   "lblFirstYear": "First year of professional activity <span style=\"font-weight:400;\">(reduced advance tax)</span>",
-  "freelancerNoteText": "<p>Indicative calculation only. <strong>Does not include:</strong> presumptive/imputed minimum income, special exemptions (e.g. taxi drivers, small settlements, \"blokaki\" contractors, 80%+ disability), or VAT. The advance tax payment is calculated using the standard rates (55% normally, 27.5% in the first year) -- it may differ in special cases (e.g. additional reductions/exemptions). Consult an accountant for your exact picture.</p>",
+  "freelancerNoteText": "<p>Indicative calculation for \"blokaki\" contractors. Assumes the criteria for being taxed as an employee are met (up to 3 clients, a liberal profession, business address at home, no other salaried work in the year) -- if even one criterion isn't met, full self-employed rules apply instead (including presumptive minimum income), which are <strong>not</strong> covered here. VAT is also not included. The advance tax payment is calculated using the standard rates (55% normally, 27.5% in the first year). Consult an accountant for your exact picture.</p>",
   "unit105": "€",
   "lbl10": "Hire Date",
   "lblSsCategory": "Insurance Category",
@@ -1185,6 +1193,36 @@ function effectiveTaxCredit(baseCredit, annualTaxable){
   return Math.max(r2(baseCredit - reduction), 0);
 }
 
+// Blokaki (ΔΠΥ taxed as employee): gross monthly income in, fixed monthly EFKA
+// category deducted, tax on the annualized (x12, no bonus structure) remainder
+// via the same bracket + credit mechanism used everywhere else in the tool.
+function blokakiCalc(grossMonthly, efkaCategoryRate, taxCreditBase, ageBracket){
+  const annualGross = r2(grossMonthly*12);
+  const annualEfka = r2(efkaCategoryRate*12);
+  const taxableIncome = Math.max(r2(annualGross-annualEfka),0);
+  const grossTax = annualTax(taxableIncome, ageBracket);
+  const usedCredit = effectiveTaxCredit(taxCreditBase, taxableIncome);
+  const finalTax = Math.max(r2(grossTax-usedCredit),0);
+  const netMonthly = Math.max(r2(grossMonthly - efkaCategoryRate - finalTax/12),0);
+  return {annualGross, annualEfka, taxableIncome, grossTax, usedCredit, finalTax, netMonthly};
+}
+
+// Inverse of the above: given a desired net monthly income, find the gross
+// monthly income that produces it. The tax-bracket function has no simple
+// closed-form inverse (progressive brackets + a tapering credit), so this
+// solves it numerically via bisection -- netMonthly(gross) is monotonically
+// non-decreasing in gross, which is exactly the property bisection needs.
+function blokakiGrossFromNet(desiredNet, efkaCategoryRate, taxCreditBase, ageBracket){
+  let low = desiredNet;
+  let high = desiredNet*2 + efkaCategoryRate*3 + 2000;
+  for(let i=0; i<60; i++){
+    const mid = (low+high)/2;
+    const {netMonthly} = blokakiCalc(mid, efkaCategoryRate, taxCreditBase, ageBracket);
+    if(netMonthly < desiredNet) low = mid; else high = mid;
+  }
+  return r2((low+high)/2);
+}
+
 function netFromGross(gross, ssRatePct, baseTaxCredit, ageBracket, ssBase, numPayments){
   if(ssBase === undefined) ssBase = gross;
   if(numPayments === undefined) numPayments = 14;
@@ -1235,33 +1273,43 @@ function recomputeSalary(){
       : (currentLang==='en' ? '(14-salary system)' : '(σύστημα 14 μισθών)');
 
   if(isFreelancer){
-    // --- Self-employed / freelancer: v1 scope ---
-    // EFKA is a fixed monthly amount per category (not a percentage of income),
-    // deductible from taxable profit. Tax uses the same bracket scale and the
-    // same tax credit mechanism as employees (extended to the self-employed for
-    // the first time from 2026), but WITHOUT any x12/x14 annualization -- the
-    // annual net profit already IS the annual taxable base.
-    // Explicitly NOT modeled (see the note on screen): presumptive/imputed
-    // minimum income ("τεκμαρτό"), special-category exemptions, VAT, and the
-    // exact advance-tax-payment percentage for next year.
-    const freelancerProfit = parseFloat(document.getElementById('freelancerProfit').value)||0;
+    // --- Blokaki (ΔΠΥ taxed as employee): v1 scope ---
+    // EFKA is a fixed monthly amount per category (not a percentage of income).
+    // Tax uses the same bracket scale and tax-credit mechanism as employees, on
+    // gross income annualized x12 (no 14-payment/bonus structure). Two entry
+    // directions: type the gross you'll invoice and see the resulting net, or
+    // type the net you want and see the gross required to reach it (solved
+    // numerically -- see blokakiGrossFromNet).
+    // Explicitly NOT modeled (see the on-screen note): this assumes the 5
+    // criteria for being taxed as an employee are met; if not, full self-employed
+    // rules apply instead (including presumptive/imputed minimum income), which
+    // are out of scope here. VAT is also not modeled.
     const freelancerCategoryRate = parseFloat(document.getElementById('freelancerCategory').value)||185.09;
+    const calcDirection = document.querySelector('input[name="calcDirection"]:checked').value;
+    const freelancerProfitField = document.getElementById('freelancerProfit');
+    const enteredAmount = parseFloat(freelancerProfitField.value)||0;
 
-    const annualProfit = r2(freelancerProfit*12);
-    const annualEfka = r2(freelancerCategoryRate*12);
-    const taxableIncome = Math.max(r2(annualProfit-annualEfka),0);
-    const grossTax = annualTax(taxableIncome, ageBracket);
-    const usedCredit = effectiveTaxCredit(taxCredit, taxableIncome);
-    const finalTax = Math.max(r2(grossTax-usedCredit),0);
-    const netMonthly = Math.max(r2(freelancerProfit - freelancerCategoryRate - finalTax/12),0);
+    document.getElementById('freelancerProfitLabel').textContent = calcDirection==='fromNet'
+      ? (currentLang==='en' ? 'Desired net monthly income' : 'Επιθυμητό καθαρό μηνιαίο εισόδημα')
+      : (currentLang==='en' ? 'Gross monthly income' : 'Μεικτό μηνιαίο εισόδημα');
 
-    document.getElementById('fpAnnualProfit').textContent = euroDec(annualProfit);
+    let grossMonthly;
+    if(calcDirection==='fromNet'){
+      grossMonthly = blokakiGrossFromNet(enteredAmount, freelancerCategoryRate, taxCredit, ageBracket);
+    } else {
+      grossMonthly = enteredAmount;
+    }
+
+    const calc2 = blokakiCalc(grossMonthly, freelancerCategoryRate, taxCredit, ageBracket);
+
+    document.getElementById('fpGrossMonthly').textContent = euroDec(grossMonthly);
+    document.getElementById('fpAnnualProfit').textContent = euroDec(calc2.annualGross);
     document.getElementById('fpEfkaMonthly').textContent = '-' + euroDec(freelancerCategoryRate);
-    document.getElementById('fpTaxable').textContent = euroDec(taxableIncome);
-    document.getElementById('fpGrossTax').textContent = '-' + euroDec(grossTax);
-    document.getElementById('fpCredit').textContent = '+' + euroDec(usedCredit);
-    document.getElementById('fpFinalTax').textContent = '-' + euroDec(finalTax);
-    document.getElementById('fpNetMonthly').textContent = euroDec(netMonthly);
+    document.getElementById('fpTaxable').textContent = euroDec(calc2.taxableIncome);
+    document.getElementById('fpGrossTax').textContent = '-' + euroDec(calc2.grossTax);
+    document.getElementById('fpCredit').textContent = '+' + euroDec(calc2.usedCredit);
+    document.getElementById('fpFinalTax').textContent = '-' + euroDec(calc2.finalTax);
+    document.getElementById('fpNetMonthly').textContent = euroDec(calc2.netMonthly);
 
     // Advance tax payment for next year: 55% of this year's tax, standard rate;
     // 27.5% (half) in the taxpayer's first year of professional activity.
@@ -1270,10 +1318,10 @@ function recomputeSalary(){
     // reductions/exemptions beyond the first-year halving.
     const isFirstYear = document.getElementById('freelancerFirstYear').checked;
     const advanceTaxRate = isFirstYear ? 0.275 : 0.55;
-    const advanceTax = r2(finalTax*advanceTaxRate);
+    const advanceTax = r2(calc2.finalTax*advanceTaxRate);
     document.getElementById('fpAdvanceTax').textContent = euroDec(advanceTax);
 
-    lastNetSalary = netMonthly;
+    lastNetSalary = calc2.netMonthly;
     lastAvgBonusEquiv = 0;
     lastExtraNet = 0;
     lastXmasNet = 0;
@@ -1283,7 +1331,7 @@ function recomputeSalary(){
 
     const incomeField = document.getElementById('income');
     if(incomeField.dataset.touched !== 'true'){
-      incomeField.value = netMonthly.toFixed(2);
+      incomeField.value = calc2.netMonthly.toFixed(2);
     }
     recomputeBudget();
     return;
@@ -1388,6 +1436,8 @@ document.getElementById('ageBracket').addEventListener('change', recomputeSalary
 document.getElementById('employmentType').addEventListener('change', recomputeSalary);
 document.getElementById('freelancerCategory').addEventListener('change', recomputeSalary);
 document.getElementById('freelancerFirstYear').addEventListener('change', recomputeSalary);
+document.getElementById('calcFromGross').addEventListener('change', recomputeSalary);
+document.getElementById('calcFromNet').addEventListener('change', recomputeSalary);
 
 // --- Investment calculator ---
 function recomputeInvestment(){
@@ -1497,10 +1547,10 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
   const is12 = employmentType === 'salaried12';
 
   const salarySection = isFreelancer ? `
-    <h2>${pt('Ελεύθερος Επαγγελματίας','Self-Employed / Freelancer')}</h2>
+    <h2>${pt('Μπλοκάκι','Blokaki (ΔΠΥ)')}</h2>
     <table>
-      <tr><td>${pt('Μέσο μηνιαίο καθαρό κέρδος','Average Monthly Net Profit')}</td><td>${val('freelancerProfit')} €</td></tr>
-      <tr><td>${pt('Ετήσιο καθαρό κέρδος','Annual Net Profit')}</td><td>${txt('fpAnnualProfit')}</td></tr>
+      <tr><td>${pt('Μεικτό μηνιαίο εισόδημα','Gross Monthly Income')}</td><td>${txt('fpGrossMonthly')}</td></tr>
+      <tr><td>${pt('Ετήσιο μεικτό εισόδημα','Annual Gross Income')}</td><td>${txt('fpAnnualProfit')}</td></tr>
       <tr><td>${pt('ΕΦΚΑ (σταθερό/μήνα)','EFKA (fixed/month)')}</td><td>${txt('fpEfkaMonthly')}</td></tr>
       <tr><td>${pt('Φορολογητέο εισόδημα (ετήσιο)','Taxable Income (annual)')}</td><td>${txt('fpTaxable')}</td></tr>
       <tr><td>${pt('Αρχικός φόρος κλίμακας','Initial Bracket Tax')}</td><td>${txt('fpGrossTax')}</td></tr>
@@ -1509,7 +1559,7 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
       <tr><td><strong>${pt('Καθαρό μηνιαίο εισόδημα','Net Monthly Income')}</strong></td><td><strong>${txt('fpNetMonthly')}</strong></td></tr>
       <tr><td>${pt('Προκαταβολή φόρου (επόμενο έτος)','Advance Tax Payment (next year)')}</td><td>${txt('fpAdvanceTax')}</td></tr>
     </table>
-    <p style="font-size:11px;color:#666;">${pt('Ενδεικτικός υπολογισμός. Δεν περιλαμβάνει τεκμαρτό εισόδημα, ειδικές εξαιρέσεις, ή ΦΠΑ.','Indicative calculation only. Does not include presumptive income, special exemptions, or VAT.')}</p>
+    <p style="font-size:11px;color:#666;">${pt('Ενδεικτικός υπολογισμός για μπλοκάκι, υποθέτει τα κριτήρια φορολόγησης ως μισθωτός. Δεν περιλαμβάνει τεκμαρτό εισόδημα ή ΦΠΑ.','Indicative calculation for blokaki contractors, assumes the employee-taxation criteria are met. Does not include presumptive income or VAT.')}</p>
   ` : `
     <h2>${pt('Μισθός & Δώρα','Salary & Bonuses')}</h2>
     <table>
