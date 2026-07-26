@@ -470,6 +470,20 @@
                 <span data-i18n="lblFirstYear">Πρώτο έτος επαγγελματικής δραστηριότητας <span style="font-weight:400;">(μειωμένη προκαταβολή φόρου)</span></span>
               </label>
             </div>
+
+            <div class="field">
+              <label data-i18n="lblTaxYear">Φορολογική κλίμακα <span style="font-weight:400;">(για σύγκριση)</span></label>
+              <div style="display:flex; gap:16px; margin-top:4px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:400;">
+                  <input type="radio" name="taxYear" id="taxYear2026" value="2026" checked style="width:auto;">
+                  <span data-i18n="lblTaxYear2026">2026 (τρέχουσα)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:400;">
+                  <input type="radio" name="taxYear" id="taxYear2025" value="2025" style="width:auto;">
+                  <span data-i18n="lblTaxYear2025">2025 (παλιά)</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -505,6 +519,7 @@
             </div>
           </div>
 
+          <div class="result-caption" id="freelancerYearBadge" style="display:none; margin-bottom:8px;"></div>
           <div class="results" style="grid-template-columns:1fr; display:none;" id="freelancerResults">
             <div class="result-box">
               <div class="label" data-i18n="freslblGrossMonthly">Μεικτό μηνιαίο εισόδημα</div>

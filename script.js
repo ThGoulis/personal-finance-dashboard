@@ -114,6 +114,9 @@ const TRANSLATIONS = {
   "freslbl7": "Καθαρό μηνιαίο εισόδημα",
   "freslbl8": "Προκαταβολή φόρου <span style=\"font-weight:400;\">(για το επόμενο έτος)</span>",
   "lblFirstYear": "Πρώτο έτος επαγγελματικής δραστηριότητας <span style=\"font-weight:400;\">(μειωμένη προκαταβολή φόρου)</span>",
+  "lblTaxYear": "Φορολογική κλίμακα <span style=\"font-weight:400;\">(για σύγκριση)</span>",
+  "lblTaxYear2026": "2026 (τρέχουσα)",
+  "lblTaxYear2025": "2025 (παλιά)",
   "freelancerNoteText": "<p>Ενδεικτικός υπολογισμός για μπλοκάκι. Υποθέτει ότι πληρούνται τα κριτήρια φορολόγησης ως μισθωτός (έως 3 εργοδότες, ελευθέριο επάγγελμα, έδρα στην κατοικία, καμία άλλη μισθωτή εργασία στο έτος) — αν χάνεται έστω ένα κριτήριο, ισχύουν οι κανόνες πλήρους ελεύθερου επαγγελματία (με τεκμαρτό εισόδημα), που <strong>δεν</strong> καλύπτονται εδώ. Επίσης δεν περιλαμβάνεται ΦΠΑ. Η προκαταβολή φόρου υπολογίζεται με τα τυπικά ποσοστά (55% κανονικά, 27,5% το πρώτο έτος). Συμβουλευτείτε λογιστή για την ακριβή εικόνα σας.</p>",
   "unit105": "€",
   "lbl10": "Ημερομηνία πρόσληψης",
@@ -339,6 +342,9 @@ const TRANSLATIONS = {
   "freslbl7": "Net Monthly Income",
   "freslbl8": "Advance Tax Payment <span style=\"font-weight:400;\">(for next year)</span>",
   "lblFirstYear": "First year of professional activity <span style=\"font-weight:400;\">(reduced advance tax)</span>",
+  "lblTaxYear": "Tax scale <span style=\"font-weight:400;\">(for comparison)</span>",
+  "lblTaxYear2026": "2026 (current)",
+  "lblTaxYear2025": "2025 (previous)",
   "freelancerNoteText": "<p>Indicative calculation for \"blokaki\" contractors. Assumes the criteria for being taxed as an employee are met (up to 3 clients, a liberal profession, business address at home, no other salaried work in the year) -- if even one criterion isn't met, full self-employed rules apply instead (including presumptive minimum income), which are <strong>not</strong> covered here. VAT is also not included. The advance tax payment is calculated using the standard rates (55% normally, 27.5% in the first year). Consult an accountant for your exact picture.</p>",
   "unit105": "€",
   "lbl10": "Hire Date",
@@ -1177,8 +1183,41 @@ const TAX_BRACKETS_BY_AGE = {
   ]
 };
 
-function annualTax(annualTaxable, ageBracket){
-  const brackets = TAX_BRACKETS_BY_AGE[ageBracket] || TAX_BRACKETS_BY_AGE.standard;
+// 2025 (pre-reform) scale, kept only for the blokaki "compare with last year" toggle.
+// Standard bracket confirmed by reconciling a third-party blokaki calculator's
+// output against ours (its tax figure matched this scale exactly, not the 2026
+// one -- see TECHNICAL.md). The young25/young30 rows are NOT independently
+// confirmed; they're extrapolated using the same "+2 percentage points to every
+// bracket except the introductory rate" pattern that produced the confirmed
+// standard row, and are clearly an estimate, not a sourced figure.
+const TAX_BRACKETS_BY_AGE_2025 = {
+  standard: [
+    {limit:10000, rate:0.09},
+    {limit:20000, rate:0.22},
+    {limit:30000, rate:0.28},
+    {limit:40000, rate:0.36},
+    {limit:60000, rate:0.41},
+    {limit:Infinity, rate:0.46}
+  ],
+  young30: [
+    {limit:20000, rate:0.09},
+    {limit:30000, rate:0.28},
+    {limit:40000, rate:0.36},
+    {limit:60000, rate:0.41},
+    {limit:Infinity, rate:0.46}
+  ],
+  young25: [
+    {limit:20000, rate:0.00},
+    {limit:30000, rate:0.28},
+    {limit:40000, rate:0.36},
+    {limit:60000, rate:0.41},
+    {limit:Infinity, rate:0.46}
+  ]
+};
+
+function annualTax(annualTaxable, ageBracket, taxYear){
+  const table = (taxYear === '2025') ? TAX_BRACKETS_BY_AGE_2025 : TAX_BRACKETS_BY_AGE;
+  const brackets = table[ageBracket] || table.standard;
   let tax=0, prev=0;
   for(const b of brackets){
     if(annualTaxable > prev){
@@ -1200,12 +1239,12 @@ function effectiveTaxCredit(baseCredit, annualTaxable){
 // employer/client covers the contribution -- efkaConfig selects which),
 // tax on the annualized (x12, no bonus structure) remainder via the same
 // bracket + credit mechanism used everywhere else in the tool.
-function blokakiCalc(grossMonthly, efkaConfig, taxCreditBase, ageBracket){
+function blokakiCalc(grossMonthly, efkaConfig, taxCreditBase, ageBracket, taxYear){
   const annualGross = r2(grossMonthly*12);
   const efkaMonthly = efkaConfig.type === 'percent' ? r2(grossMonthly*efkaConfig.rate) : efkaConfig.amount;
   const annualEfka = r2(efkaMonthly*12);
   const taxableIncome = Math.max(r2(annualGross-annualEfka),0);
-  const grossTax = annualTax(taxableIncome, ageBracket);
+  const grossTax = annualTax(taxableIncome, ageBracket, taxYear);
   const usedCredit = effectiveTaxCredit(taxCreditBase, taxableIncome);
   const finalTax = Math.max(r2(grossTax-usedCredit),0);
   const netMonthly = Math.max(r2(grossMonthly - efkaMonthly - finalTax/12),0);
@@ -1217,13 +1256,13 @@ function blokakiCalc(grossMonthly, efkaConfig, taxCreditBase, ageBracket){
 // closed-form inverse (progressive brackets + a tapering credit), so this
 // solves it numerically via bisection -- netMonthly(gross) is monotonically
 // non-decreasing in gross, which is exactly the property bisection needs.
-function blokakiGrossFromNet(desiredNet, efkaConfig, taxCreditBase, ageBracket){
+function blokakiGrossFromNet(desiredNet, efkaConfig, taxCreditBase, ageBracket, taxYear){
   const roughEfka = efkaConfig.type === 'percent' ? desiredNet*efkaConfig.rate : efkaConfig.amount;
   let low = desiredNet;
   let high = desiredNet*2 + roughEfka*3 + 2000;
   for(let i=0; i<60; i++){
     const mid = (low+high)/2;
-    const {netMonthly} = blokakiCalc(mid, efkaConfig, taxCreditBase, ageBracket);
+    const {netMonthly} = blokakiCalc(mid, efkaConfig, taxCreditBase, ageBracket, taxYear);
     if(netMonthly < desiredNet) low = mid; else high = mid;
   }
   return r2((low+high)/2);
@@ -1295,6 +1334,7 @@ function recomputeSalary(){
       ? {type:'percent', rate: parseFloat(categoryRaw.slice(4))}
       : {type:'fixed', amount: parseFloat(categoryRaw)||156.79};
     const calcDirection = document.querySelector('input[name="calcDirection"]:checked').value;
+    const taxYear = document.querySelector('input[name="taxYear"]:checked').value;
     const freelancerProfitField = document.getElementById('freelancerProfit');
     const enteredAmount = parseFloat(freelancerProfitField.value)||0;
 
@@ -1302,14 +1342,24 @@ function recomputeSalary(){
       ? (currentLang==='en' ? 'Desired net monthly income' : 'Επιθυμητό καθαρό μηνιαίο εισόδημα')
       : (currentLang==='en' ? 'Gross monthly income' : 'Μεικτό μηνιαίο εισόδημα');
 
+    const yearBadge = document.getElementById('freelancerYearBadge');
+    if(taxYear==='2025'){
+      yearBadge.style.display = 'block';
+      yearBadge.textContent = currentLang==='en'
+        ? '\u26a0 Showing the 2025 (previous) tax scale for comparison \u2014 the standard bracket is confirmed, the age-based brackets below 30 are an estimate.'
+        : '\u26a0 Εμφανίζεται η κλίμακα 2025 (παλιά) για σύγκριση — η τυπική κλίμακα είναι επιβεβαιωμένη, οι ηλικιακές κλίμακες κάτω των 30 είναι εκτίμηση.';
+    } else {
+      yearBadge.style.display = 'none';
+    }
+
     let grossMonthly;
     if(calcDirection==='fromNet'){
-      grossMonthly = blokakiGrossFromNet(enteredAmount, efkaConfig, taxCredit, ageBracket);
+      grossMonthly = blokakiGrossFromNet(enteredAmount, efkaConfig, taxCredit, ageBracket, taxYear);
     } else {
       grossMonthly = enteredAmount;
     }
 
-    const calc2 = blokakiCalc(grossMonthly, efkaConfig, taxCredit, ageBracket);
+    const calc2 = blokakiCalc(grossMonthly, efkaConfig, taxCredit, ageBracket, taxYear);
 
     document.getElementById('fpGrossMonthly').textContent = euroDec(grossMonthly);
     document.getElementById('fpAnnualProfit').textContent = euroDec(calc2.annualGross);
@@ -1447,6 +1497,8 @@ document.getElementById('freelancerCategory').addEventListener('change', recompu
 document.getElementById('freelancerFirstYear').addEventListener('change', recomputeSalary);
 document.getElementById('calcFromGross').addEventListener('change', recomputeSalary);
 document.getElementById('calcFromNet').addEventListener('change', recomputeSalary);
+document.getElementById('taxYear2026').addEventListener('change', recomputeSalary);
+document.getElementById('taxYear2025').addEventListener('change', recomputeSalary);
 
 // --- Investment calculator ---
 function recomputeInvestment(){
