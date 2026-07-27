@@ -1,9 +1,9 @@
 // --- Language / i18n ---
 const TRANSLATIONS = {
   el: {
-  "eyebrow1": "ΜΙΣΘΟΣ, ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ & ΔΑΝΕΙΟ",
+  "eyebrow1": "ΟΙΚΟΝΟΜΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ",
   "h1title": "Οικονομικός Σχεδιασμός",
-  "pageIntro1": "Δωρεάν σχεδιασμός των οικονομικών σου — μισθός (με φορολογική κλίμακα ανά ηλικία), δώρα, προϋπολογισμός, επενδύσεις και δάνειο, όλα συνδεδεμένα.",
+  "pageIntro1": "Δωρεάν σχεδιασμός των οικονομικών σου — μισθός (με φορολογική κλίμακα ανά ηλικία), δώρα, προϋπολογισμός, επενδύσεις, έξοδα οχήματος και δάνειο, όλα συνδεδεμένα.",
   "siteFooter1": "Το εργαλείο παρέχεται ενδεικτικά, χωρίς καμία εγγύηση ακρίβειας — δεν αποτελεί φορολογική, νομική ή χρηματοοικονομική συμβουλή. Για αποφάσεις που σας δεσμεύουν, συμβουλευτείτε αρμόδιο επαγγελματία (λογιστή, μισθοδοσία, τραπεζικό σύμβουλο).",
   "footerIssuesLink": "Σχόλια / Issues",
   "startHint1": "\u2192 Ξεκίνα από το tab «Μισθός & Δώρα» για να υπολογίσεις πρώτα το καθαρό σου εισόδημα.",
@@ -56,6 +56,7 @@ const TRANSLATIONS = {
   "reslbl69": "Τελικό συνολικό κόστος",
   "reslbl70": "Αριθμός δόσεων",
   "loanEmptyNote": "Δεν έχεις συμπληρώσει ακόμα ποσό δανείου.",
+  "prepEmptyNote": "Συμπλήρωσε πρώτα τα στοιχεία δανείου παραπάνω.",
   "legend1": "Κεφάλαιο",
   "legend2": "Τόκοι",
   "btn51": "Ετήσια προβολή",
@@ -209,9 +210,9 @@ const TRANSLATIONS = {
   "tdlbl8": "Επίδομα Αδείας"
 },
   en: {
-  "eyebrow1": "SALARY, BUDGET & LOAN",
+  "eyebrow1": "FINANCIAL PLANNING",
   "h1title": "Financial Planner",
-  "pageIntro1": "Free financial planning for your salary (with the age-based tax scale), bonuses, budget, investments, and loans \u2014 all connected.",
+  "pageIntro1": "Free financial planning for your salary (with the age-based tax scale), bonuses, budget, investments, vehicle expenses, and loans \u2014 all connected.",
   "siteFooter1": "This tool is provided for indicative purposes only, with no guarantee of accuracy \u2014 it does not constitute tax, legal, or financial advice. For decisions that commit you, consult a qualified professional (accountant, payroll manager, or bank advisor).",
   "footerIssuesLink": "Feedback / Issues",
   "startHint1": "\u2192 Start with the \u00abSalary & Bonuses\u00bb tab to work out your net income first.",
@@ -264,6 +265,7 @@ const TRANSLATIONS = {
   "reslbl69": "Total Final Cost",
   "reslbl70": "Number of Installments",
   "loanEmptyNote": "You haven't entered a loan amount yet.",
+  "prepEmptyNote": "Fill in the loan details above first.",
   "legend1": "Principal",
   "legend2": "Interest",
   "btn51": "Yearly View",
@@ -555,7 +557,7 @@ function recompute(){
   lastMonthlyPayment = M;
   if(typeof recomputeBudget === 'function') recomputeBudget();
   if(typeof updateDtiIndicator === 'function') updateDtiIndicator();
-  return {principal, months, r, M, schedule};
+  return {amount, principal, months, r, M, schedule};
 }
 
 let currentSchedule = [];
@@ -660,7 +662,16 @@ document.getElementById('modeLower').addEventListener('click', ()=>{
 
 function computePrepayment(){
   const base = recompute();
-  const {principal, months, r, M, schedule} = base;
+  const {amount, principal, months, r, M, schedule} = base;
+
+  if(amount <= 0){
+    document.getElementById('compareBox').style.display = 'none';
+    document.getElementById('savingsBanner').style.display = 'none';
+    document.getElementById('prepEmptyNote').style.display = 'block';
+    return;
+  }
+  document.getElementById('prepEmptyNote').style.display = 'none';
+
   const prepMonth = Math.min(Math.max(parseInt(document.getElementById('prepMonth').value)||1,1), months);
   const prepAmount = Math.max(parseFloat(document.getElementById('prepAmount').value)||0, 0);
 
