@@ -55,6 +55,7 @@ const TRANSLATIONS = {
   "reslbl68": "Σύνολο τόκων",
   "reslbl69": "Τελικό συνολικό κόστος",
   "reslbl70": "Αριθμός δόσεων",
+  "loanEmptyNote": "Δεν έχεις συμπληρώσει ακόμα ποσό δανείου.",
   "legend1": "Κεφάλαιο",
   "legend2": "Τόκοι",
   "btn51": "Ετήσια προβολή",
@@ -119,6 +120,7 @@ const TRANSLATIONS = {
   "unitDays": "ημέρες",
   "unit110": "ώρες",
   "lbl17": "Έξτρα καθαρά μηνιαία <span style=\"font-weight:400;\">(π.χ. Ticket Restaurant)</span>",
+  "lblOptional": "Προαιρετικά <span style=\"font-weight:400;\">(αν δεν ισχύουν, αγνόησέ τα)</span>",
   "unit111": "€",
   "reslbl71": "Μικτός μηνιαίος μισθός",
   "reslbl72": "Κρατήσεις ΕΦΚΑ",
@@ -189,6 +191,7 @@ const TRANSLATIONS = {
   "lbl30": "Service / συντήρηση",
   "unit122": "€/έτος",
   "h242": "<span class=\"num\">6</span> Λειτουργικά Έξοδα <span style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(μηνιαία)</span>",
+  "lblMotoTotal": "Σύνολο μηνιαίου κόστους οχήματος <span style=\"font-weight:400;\">(πάγια ισοδύναμο + λειτουργικά)</span>",
   "lbl31": "Καύσιμα",
   "unit123": "€/μήνα",
   "lbl32": "Πάρκινγκ",
@@ -260,6 +263,7 @@ const TRANSLATIONS = {
   "reslbl68": "Total Interest",
   "reslbl69": "Total Final Cost",
   "reslbl70": "Number of Installments",
+  "loanEmptyNote": "You haven't entered a loan amount yet.",
   "legend1": "Principal",
   "legend2": "Interest",
   "btn51": "Yearly View",
@@ -324,6 +328,7 @@ const TRANSLATIONS = {
   "unitDays": "days",
   "unit110": "hrs",
   "lbl17": "Extra Net Monthly <span style=\"font-weight:400;\">(e.g. Ticket Restaurant)</span>",
+  "lblOptional": "Optional <span style=\"font-weight:400;\">(ignore if these don't apply)</span>",
   "unit111": "€",
   "reslbl71": "Gross Monthly Salary",
   "reslbl72": "Social Security Contributions",
@@ -394,6 +399,7 @@ const TRANSLATIONS = {
   "lbl30": "Service / Maintenance",
   "unit122": "€/yr",
   "h242": "<span class=\"num\">6</span> Operating Expenses <span style=\"font-weight:400;font-size:11px;color:var(--ink-soft);\">(monthly)</span>",
+  "lblMotoTotal": "Total monthly vehicle cost <span style=\"font-weight:400;\">(fixed equivalent + operating)</span>",
   "lbl31": "Fuel",
   "unit123": "€/mo",
   "lbl32": "Parking",
@@ -521,17 +527,21 @@ function renderLedger(schedule){
 }
 
 function recompute(){
-  const {principal, months, r} = getInputs();
+  const {amount, principal, months, r} = getInputs();
   const M = monthlyPayment(principal, r, months);
   const schedule = buildSchedule(principal, r, months, M);
   const totalInterest = schedule.reduce((s,row)=>s+row.interest,0);
   const totalPaid = totalInterest + principal;
 
-  document.getElementById('rMonthly').textContent = euroDec(M);
-  document.getElementById('rPrincipal').textContent = euro(principal);
-  document.getElementById('rInterest').textContent = euro(totalInterest);
-  document.getElementById('rTotal').textContent = euro(totalPaid);
-  document.getElementById('rMonths').textContent = schedule.length + (currentLang==='en' ? ' installments' : ' δόσεις');
+  const hasAmount = amount > 0;
+  document.getElementById('loanEmptyNote').style.display = hasAmount ? 'none' : 'block';
+  document.getElementById('loanResultsGrid').style.opacity = hasAmount ? '1' : '0.5';
+
+  document.getElementById('rMonthly').textContent = hasAmount ? euroDec(M) : '—';
+  document.getElementById('rPrincipal').textContent = hasAmount ? euro(principal) : '—';
+  document.getElementById('rInterest').textContent = hasAmount ? euro(totalInterest) : '—';
+  document.getElementById('rTotal').textContent = hasAmount ? euro(totalPaid) : '—';
+  document.getElementById('rMonths').textContent = hasAmount ? (schedule.length + (currentLang==='en' ? ' installments' : ' δόσεις')) : '—';
 
   renderLedger(schedule);
   currentSchedule = schedule;
@@ -791,11 +801,14 @@ function recomputeBudget(){
 
   const motoTotal = lastMonthlyPayment + fixedMonthlyEquiv + variableMonthly;
   lastPureVehicleCost = fixedMonthlyEquiv + variableMonthly;
+  document.getElementById('motoTotalDisplay').textContent = euroDec(lastPureVehicleCost);
 
   document.getElementById('fMotoLoan').textContent = euroDec(lastMonthlyPayment);
   document.getElementById('fMotoFixed').textContent = euroDec(fixedMonthlyEquiv);
   document.getElementById('fMotoVar').textContent = euroDec(variableMonthly);
   document.getElementById('fMotoTotal').textContent = euroDec(motoTotal);
+  document.getElementById('fLoanResultWrap').style.display = hasLoan ? 'block' : 'none';
+  document.getElementById('fVehicleResultsWrap').style.display = lastPureVehicleCost > 0 ? 'block' : 'none';
 
   const income = parseFloat(document.getElementById('income').value)||0;
   const otherFixed = parseFloat(document.getElementById('fixedExpenses').value)||0;
@@ -918,7 +931,8 @@ function recomputeBudget(){
       ? `Overall, the bonuses fall short by <strong>${euroDec(Math.abs(totalSurplus))}</strong> of covering all three fixed vehicle expenses \u2014 the shortfall will need to come from the regular salary.`
       : `Συνολικά, τα δώρα υπολείπονται κατά <strong>${euroDec(Math.abs(totalSurplus))}</strong> από το να καλύψουν και τα τρία πάγια έξοδα οχήματος — θα χρειαστεί συμπλήρωμα από τον τακτικό μισθό.`;
   }
-  tips.push(allocText);
+  const hasVehicleFixedCosts = (roadTaxCost + serviceCost + insuranceCost) > 0;
+  if(hasVehicleFixedCosts) tips.push(allocText);
   lastAllocationSurplus = totalSurplus;
   updateVacationFund();
   }
