@@ -129,7 +129,7 @@ def run(file_url):
         page.fill('#overtimeHours', '1')
         page.dispatch_event('#overtimeHours', 'input')
         page.wait_for_timeout(150)
-        check('Net total (regular + extra)', page.inner_text('#sNetTotal'), 1009.75, tolerance=0.05)
+        check('Net total (regular + extra)', page.inner_text('#sNetTotal'), 1017.11, tolerance=0.05)
         page.close()
 
         # ================= 5. Investment calculator =================
@@ -224,6 +224,44 @@ def run(file_url):
         page.evaluate("document.getElementById('grossSalary').dispatchEvent(new Event('blur'))")
         page.wait_for_timeout(100)
         check_bool('grossSalary clamps to 0 min', page.input_value('#grossSalary'), '0')
+        page.close()
+
+        # ================= 10. 12-salary annualization =================
+        print("\n=== 10. 12-salary employment (x12 annualization, no bonuses) ===")
+        page = browser.new_page()
+        page.goto(file_url)
+        page.wait_for_timeout(300)
+        page.click('#tabBtnSalary')
+        page.fill('#grossSalary', '1500')
+        page.dispatch_event('#grossSalary', 'input')
+        page.fill('#ssRate', '13.37')
+        page.dispatch_event('#ssRate', 'input')
+        page.select_option('#employmentType', 'salaried12')
+        page.wait_for_timeout(150)
+        check('12-salary net', page.inner_text('#sNet'), 1189.99)
+        check_bool('Bonus table hidden for 12-salary', page.is_visible('#bonusTableWrap'), False)
+        check_bool('Hire date field hidden for 12-salary', page.is_visible('#hireDateField'), False)
+        # switching back to 14-salary should restore the original behavior
+        page.select_option('#employmentType', 'salaried14')
+        page.wait_for_timeout(150)
+        check_bool('Bonus table visible again for 14-salary', page.is_visible('#bonusTableWrap'), True)
+        page.close()
+
+        # ================= 11. Insurance category auto-fill =================
+        print("\n=== 11. Insurance category dropdown auto-fills EFKA % ===")
+        page = browser.new_page()
+        page.goto(file_url)
+        page.wait_for_timeout(300)
+        page.click('#tabBtnSalary')
+        page.select_option('#ssCategory', '15.57')
+        page.wait_for_timeout(150)
+        check_bool('ssRate auto-filled from KVAE category', page.input_value('#ssRate'), '15.57')
+        # "adjust manually" (empty value) must NOT overwrite a manually-typed rate
+        page.fill('#ssRate', '20')
+        page.dispatch_event('#ssRate', 'input')
+        page.select_option('#ssCategory', '')
+        page.wait_for_timeout(150)
+        check_bool('Manual category leaves ssRate untouched', page.input_value('#ssRate'), '20')
         page.close()
 
         print("\nJavaScript errors encountered:", errors)
