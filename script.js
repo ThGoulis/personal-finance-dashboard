@@ -10,7 +10,7 @@ const TRANSLATIONS = {
   "introT1": "Μισθός & Δώρα",
   "introD1": " — καθαρός μισθός, φόρος ανά ηλικία, δώρα Χριστουγέννων/Πάσχα, επίδομα αδείας.",
   "introT2": "Προϋπολογισμός",
-  "introD2": " — πόσο σου μένει τον μήνα, πρόταση αποταμίευσης, αποθεματικό διακοπών.",
+  "introD2": " — πόσο σου μένει τον μήνα, πρόταση αποταμίευσης, αποθεματικό.",
   "introT3": "Δάνειο",
   "introD3": " — δόση, τόκοι, σενάρια μερικής αποπληρωμής.",
   "introT4": "Έξοδα Οχήματος",
@@ -218,7 +218,7 @@ const TRANSLATIONS = {
   "introT1": "Salary & Bonuses",
   "introD1": " \u2014 net salary, age-based tax, Christmas/Easter bonuses, leave allowance.",
   "introT2": "Budget",
-  "introD2": " \u2014 what's left each month, a savings suggestion, and the vacation fund.",
+  "introD2": " \u2014 what's left each month, a savings suggestion, and the reserve fund.",
   "introT3": "Loan",
   "introD3": " \u2014 payment, interest, partial-prepayment scenarios.",
   "introT4": "Vehicle Expenses",
@@ -858,7 +858,7 @@ function recomputeBudget(){
 
   // --- Smart bonus-to-expense allocation (best-fit by amount, not fixed pairing) ---
   // Runs regardless of whether a loan is active: bonuses/allowance vs. whatever
-  // vehicle expenses are entered, so the vacation fund suggestion never depends
+  // vehicle expenses are entered, so the reserve fund suggestion never depends
   // on there being an active loan.
   {
   const roadTaxCost = parseFloat(document.getElementById('motoRoadTax').value)||0;
@@ -924,8 +924,8 @@ function recomputeBudget(){
   });
   if(totalSurplus > 0){
     allocText += currentLang==='en'
-      ? `After covering all three expenses, <strong>${euroDec(totalSurplus)}</strong> is left over from the bonuses this year \u2014 this feeds the vacation fund below.`
-      : `Μετά την κάλυψη και των τριών εξόδων, μένει συνολικά <strong>${euroDec(totalSurplus)}</strong> από τα δώρα τον χρόνο — αυτό τροφοδοτεί το αποθεματικό διακοπών παρακάτω.`;
+      ? `After covering all three expenses, <strong>${euroDec(totalSurplus)}</strong> is left over from the bonuses this year \u2014 this feeds the reserve fund below.`
+      : `Μετά την κάλυψη και των τριών εξόδων, μένει συνολικά <strong>${euroDec(totalSurplus)}</strong> από τα δώρα τον χρόνο — αυτό τροφοδοτεί το αποθεματικό παρακάτω.`;
   } else if(totalSurplus < 0){
     allocText += currentLang==='en'
       ? `Overall, the bonuses fall short by <strong>${euroDec(Math.abs(totalSurplus))}</strong> of covering all three fixed vehicle expenses \u2014 the shortfall will need to come from the regular salary.`
