@@ -287,6 +287,8 @@ Repository includes an MIT `LICENSE` and a small footer signature/attribution li
 
 **Browser caching:** `style.css` and `script.js` are referenced with a version query string (`style.css?v=YYYYMMDD`) rather than a bare filename. Without this, a returning visitor's browser can keep serving an old cached copy of these files indefinitely after an update — clearing cookies does **not** clear the browser's file cache, so "I cleared my cookies and it's still broken" is a real, confusing symptom of this exact issue (confirmed: incognito mode, which starts with an empty cache, showed the update correctly while the same browser's normal window did not). Bump the version string whenever `style.css` or `script.js` changes in a way that matters to already-cached visitors.
 
+**This bit us for real, not just hypothetically:** the version string was introduced once and then not bumped across several days of further edits (the entire blokaki build-and-removal, the Hub card fixes). A returning visitor ended up on a stale, partially-broken intermediate `script.js` — served entirely from their own cache under the unchanged `?v=` value — showing blank dashes everywhere, while a fresh test of the actual current file worked perfectly. The lesson: adding a cache-busting mechanism once is not the fix; *actually bumping it on every subsequent substantive edit* is the fix, and it's easy to forget precisely because the local/test environment never has a stale cache to reveal the problem.
+
 ---
 
 ## 9. Quality Assurance
