@@ -859,12 +859,12 @@ function recomputeBudget(){
 
   if(motoSharePct > 20){
     tips.push(currentLang==='en'
-      ? `The vehicle absorbs about <strong>${motoSharePct.toFixed(0)}%</strong> of your monthly income \u2014 quite a high share. It's worth reviewing the numbers (loan terms and/or running costs) to ease your monthly budget.`
-      : `Το όχημα απορροφά περίπου <strong>${motoSharePct.toFixed(0)}%</strong> του μηνιαίου σου εισοδήματος — αρκετά υψηλό ποσοστό. Αξίζει να ξανακοιτάξεις τα νούμερα (όρους δανείου ή/και τρέχοντα έξοδα) για να ελαφρύνει τον μηνιαίο προϋπολογισμό σου.`);
+      ? `The loan absorbs about <strong>${motoSharePct.toFixed(0)}%</strong> of your monthly income \u2014 quite a high share. It's worth reviewing the numbers (loan terms and/or running costs) to ease your monthly budget.`
+      : `Το δάνειο απορροφά περίπου <strong>${motoSharePct.toFixed(0)}%</strong> του μηνιαίου σου εισοδήματος — αρκετά υψηλό ποσοστό. Αξίζει να ξανακοιτάξεις τα νούμερα (όρους δανείου ή/και τρέχοντα έξοδα) για να ελαφρύνει τον μηνιαίο προϋπολογισμό σου.`);
   } else if(motoSharePct > 0){
     tips.push(currentLang==='en'
-      ? `The vehicle absorbs about <strong>${motoSharePct.toFixed(0)}%</strong> of your monthly income \u2014 a reasonable range.`
-      : `Το όχημα απορροφά περίπου <strong>${motoSharePct.toFixed(0)}%</strong> του μηνιαίου σου εισοδήματος — σε λογικά πλαίσια.`);
+      ? `The loan absorbs about <strong>${motoSharePct.toFixed(0)}%</strong> of your monthly income \u2014 a reasonable range.`
+      : `Το δάνειο απορροφά περίπου <strong>${motoSharePct.toFixed(0)}%</strong> του μηνιαίου σου εισοδήματος — σε λογικά πλαίσια.`);
   }
 
   // --- Smart bonus-to-expense allocation (best-fit by amount, not fixed pairing) ---
