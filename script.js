@@ -112,6 +112,11 @@ const TRANSLATIONS = {
   "lbl15": "Ώρες αργίας <span style=\"font-weight:400;\">(μηνιαίες, +75%)</span>",
   "unit109": "ώρες",
   "lbl16": "Ώρες υπερωρίας <span style=\"font-weight:400;\">(μηνιαίες, +40%)</span>",
+  "lblBusinessType": "Τύπος επιχείρησης <span style=\"font-weight:400;\">(αφορά την αμοιβή αργίας)</span>",
+  "btypeContinuous": "Συνεχής λειτουργία (π.χ. εστίαση, ξενοδοχεία)",
+  "btypeOccasional": "Έκτακτη λειτουργία (π.χ. γραφεία, καταστήματα)",
+  "lblHolidayDays": "Ημέρες αργίας που εργάστηκες <span style=\"font-weight:400;\">(ολόκληρη ημερήσια αμοιβή η καθεμία)</span>",
+  "unitDays": "ημέρες",
   "unit110": "ώρες",
   "lbl17": "Έξτρα καθαρά μηνιαία <span style=\"font-weight:400;\">(π.χ. Ticket Restaurant)</span>",
   "unit111": "€",
@@ -312,6 +317,11 @@ const TRANSLATIONS = {
   "lbl15": "Holiday-Work Hours <span style=\"font-weight:400;\">(monthly, +75%)</span>",
   "unit109": "hrs",
   "lbl16": "Overtime Hours <span style=\"font-weight:400;\">(monthly, +40%)</span>",
+  "lblBusinessType": "Business Type <span style=\"font-weight:400;\">(affects holiday pay)</span>",
+  "btypeContinuous": "Continuous operation (e.g. restaurants, hotels)",
+  "btypeOccasional": "Occasional operation (e.g. offices, shops)",
+  "lblHolidayDays": "Holiday days worked <span style=\"font-weight:400;\">(a full day's pay each)</span>",
+  "unitDays": "days",
   "unit110": "hrs",
   "lbl17": "Extra Net Monthly <span style=\"font-weight:400;\">(e.g. Ticket Restaurant)</span>",
   "unit111": "€",
@@ -1199,9 +1209,23 @@ function recomputeSalary(){
   const overworkHours = parseFloat(document.getElementById('overworkHours').value)||0;
   const holidayHours = parseFloat(document.getElementById('holidayHours').value)||0;
   const overtimeHours = parseFloat(document.getElementById('overtimeHours').value)||0;
+  const businessType = document.getElementById('businessType').value;
+  const isOccasional = businessType === 'occasional';
+  const holidayDays = isOccasional ? (parseFloat(document.getElementById('holidayDays').value)||0) : 0;
+
+  document.getElementById('holidayDaysField').style.display = isOccasional ? 'block' : 'none';
+  document.getElementById('holidayHoursLabel').textContent = isOccasional
+    ? (currentLang==='en' ? 'Holiday hours (monthly, +75% supplement only)' : 'Ώρες αργίας (μηνιαίες, μόνο η προσαύξηση 75%)')
+    : (currentLang==='en' ? 'Holiday Hours (monthly, +75%)' : 'Ώρες αργίας (μηνιαίες, +75%)');
 
   const hourlyWage = gross/25/6.667;
-  const extraGross = overworkHours*hourlyWage*1.20 + holidayHours*hourlyWage*0.75 + overtimeHours*hourlyWage*1.40;
+  // Occasional-operation businesses (offices, shops) are normally closed on
+  // public holidays; being called in earns a full day's pay (gross/25) on top
+  // of the 75% supplement. Continuous-operation businesses (restaurants,
+  // hotels) already cover that day within the monthly salary, so only the 75%
+  // supplement itself is extra -- see the "Ν.4808/2021 holiday pay" note.
+  const holidayDaysPay = isOccasional ? holidayDays*(gross/25) : 0;
+  const extraGross = overworkHours*hourlyWage*1.20 + holidayHours*hourlyWage*0.75 + overtimeHours*hourlyWage*1.40 + holidayDaysPay;
 
   const combinedCalc = netFromGross(gross + extraGross, ssRate, taxCredit, ageBracket, gross, numPayments);
   const extraPayNet = r2(combinedCalc.net - net);
@@ -1272,11 +1296,12 @@ function recomputeSalary(){
 }
 
 document.getElementById('income').addEventListener('input', function(){ this.dataset.touched = 'true'; });
-['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket','employmentType'].forEach(id=>{
+['grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket','employmentType','holidayDays'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recomputeSalary);
 });
 document.getElementById('ageBracket').addEventListener('change', recomputeSalary);
 document.getElementById('employmentType').addEventListener('change', recomputeSalary);
+document.getElementById('businessType').addEventListener('change', recomputeSalary);
 
 // --- Investment calculator ---
 function recomputeInvestment(){
