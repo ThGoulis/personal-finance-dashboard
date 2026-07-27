@@ -301,8 +301,8 @@ Repository includes an MIT `LICENSE` and a small footer signature/attribution li
 - Hub dashboard default view and card-to-tab navigation
 - Horizontal-overflow-free rendering at 320/375/412px, in both languages, across every tab
 - Input clamping (Section 6)
-
-**Known coverage gap:** the suite does not yet exercise the employment-type branching (Section 4.13) -- the 12-salary annualization or the insurance-category auto-fill -- since these were added after the suite was last extended. Extending the suite to cover both employment-type paths is a worthwhile next addition to it.
+- 12-salary annualization, and that switching employment types correctly shows/hides the bonus table and hire-date field (Section 4.13)
+- Insurance-category dropdown auto-fills the EFKA rate, and that "adjust manually" leaves a hand-typed rate untouched
 
 Run it with:
 ```
@@ -311,3 +311,19 @@ playwright install chromium
 python tests/qa_tests.py
 ```
 Exits non-zero if any check fails, printing which one(s). Every reference value in the suite was itself cross-checked against an independent Python re-implementation of the relevant formula (or, for the salary/tax logic, a real payslip) before being hard-coded as the expected result — the point of the suite is to catch *regressions* against known-good numbers, not to (re-)establish that the numbers are correct in the first place.
+
+---
+
+## 10. Sources & Verification
+
+Every rule this tool implements was checked against a primary source before being coded, and re-checked whenever a change was made to it. This section collects those sources in one place, organized by what they support, rather than leaving them scattered across §4's commit-by-commit notes.
+
+**Primary/official sources (government):**
+- **Ministry of Labour** (ypergasias.gov.gr) — employee/employer EFKA contribution rates and their breakdown (main pension, auxiliary, heavy/unhealthy occupation surcharge, underground/underwater work surcharge), the monthly contribution ceiling. Fetched directly: `ypergasias.gov.gr/koinoniki-asfalisi/asfalismenoi-eisfores-kai-paroches/asfalistikes-eisfores/`.
+- **AADE** (Independent Authority for Public Revenue, aade.gr) — VAT declaration information, linked directly from the VAT field's info icon. Fetched and confirmed live: `aade.gr/diloseis-fpa-vies`.
+- **Ν.5184/2025 Άρθρο 41**, as amended by **Ν.5239/2025 Άρθρο 73** — the EFKA exemption for overwork/overtime/holiday-work premiums (§4.5); confirmed consistent across the Ministry of Labour page and multiple independent payroll/tax sources, not just one.
+- **e-ΕΦΚΑ circulars 8/2025 and 21/2025** — implementation guidance for the same exemption.
+
+**Cross-referenced secondary sources (tax-advisory sites, news outlets):** used to triangulate figures where no single government page gave the full picture, or to sanity-check a government-sourced figure from an independent angle — never used as the sole basis for a number. Where a secondary source *disagreed* with another, the discrepancy was investigated and resolved (or the disagreement itself documented) rather than picking one arbitrarily — see the 2025-vs-2026 tax-bracket reconciliation and the third-party blokaki-calculator cross-check, both in §4's revision history, as worked examples of that process.
+
+**What this means practically:** no figure in this tool is "we assumed" — each has a traceable origin, and several (EFKA contribution amounts, the overtime EFKA exemption, the advance-tax-payment rate) are corroborated by more than one independent source. Where confidence is *lower* than this standard — the young-age 2025 tax brackets being the clearest example — that's stated explicitly in the relevant section rather than presented with the same confidence as a sourced figure.

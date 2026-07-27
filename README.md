@@ -94,7 +94,7 @@ playwright install chromium
 python tests/qa_tests.py
 ```
 
-See [TECHNICAL.md](TECHNICAL.md) for what each check covers — including a known coverage gap around the 12-payment employment-type path, added after the suite was last extended.
+See [TECHNICAL.md](TECHNICAL.md) for what each check covers.
 
 ## Technical documentation
 
