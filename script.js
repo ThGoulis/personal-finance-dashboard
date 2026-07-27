@@ -952,6 +952,10 @@ function recomputeBudget(){
     }
   } else {
     savingsBox.style.display = 'none';
+    if(invContribField.dataset.touched !== 'true'){
+      invContribField.value = lastSavingsSuggestion.toFixed(2);
+      if(typeof recomputeInvestment === 'function') recomputeInvestment();
+    }
   }
 
   document.getElementById('budgetTips').innerHTML = tips.map(t=>
@@ -1397,7 +1401,7 @@ const DEFAULT_VALUES = {
   overworkHours:'0', holidayHours:'0', overtimeHours:'0',
   motoInsurance:'0', motoRoadTax:'0', motoService:'0', motoFuel:'0', motoParking:'0', motoOther:'0',
   income:'1400', fixedExpenses:'0', vacationSaved:'0', savingsPct:'20',
-  invStart:'0', invYears:'15', invContribution:'50', invContribFreq:'12', invRate:'6', invCompound:'12'
+  invStart:'0', invYears:'10', invContribution:'50', invContribFreq:'12', invRate:'3', invCompound:'12'
 };
 
 document.getElementById('printBtn').addEventListener('click', ()=>{
@@ -1444,6 +1448,17 @@ document.getElementById('printBtn').addEventListener('click', ()=>{
       <tr><td>${pt('Τελικό συνολικό κόστος','Total Final Cost')}</td><td>${txt('rTotal')}</td></tr>
     </table>
     ` : ''}
+
+    <h2>${pt('Επενδυτικός Υπολογιστής','Investment Calculator')}</h2>
+    <table>
+      <tr><td>${pt('Αρχικό ποσό','Starting Amount')}</td><td>${val('invStart')} €</td></tr>
+      <tr><td>${pt('Έτη επένδυσης','Years Invested')}</td><td>${val('invYears')}</td></tr>
+      <tr><td>${pt('Επιπλέον καταθέσεις','Regular Contribution')}</td><td>${val('invContribution')} €</td></tr>
+      <tr><td>${pt('Υποθετικό ετήσιο ποσοστό απόδοσης','Assumed Annual Return')}</td><td>${val('invRate')}%</td></tr>
+      <tr><td>${pt('Σύνολο καταθέσεων','Total Contributions')}</td><td>${txt('invTotalContrib')}</td></tr>
+      <tr><td>${pt('Σύνολο κερδών','Total Growth')}</td><td>${txt('invTotalGrowth')}</td></tr>
+      <tr><td><strong>${pt('Τελικό υπόλοιπο','Final Balance')}</strong></td><td><strong>${txt('invFinalBalance')}</strong></td></tr>
+    </table>
 
     <h2>${pt('Έξοδα Οχήματος','Vehicle Expenses')}</h2>
     <table>
