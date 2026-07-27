@@ -217,54 +217,15 @@ The Budget tab's own "Total Monthly Vehicle Cost" box (`fMotoTotal`) intentional
 
 Reusing that same combined figure elsewhere (the Hub card, the print report) turned out to double-count the loan: both a standalone "Loan" section/card *and* a "Vehicle Expenses" section/card would each show a number that included the same payment, with no adjacent line to clarify it. Fixed by tracking a second global, `lastPureVehicleCost = fixedMonthlyEquiv + variableMonthly` (no loan), and using *that* for any context where the vehicle total is shown without its loan figure directly alongside it. The lesson: a combined total is only safe to reuse in the exact layout context that justified combining it in the first place — anywhere else, use the disaggregated figure.
 
-### 4.13 Employment type branching (salaried 14 / salaried 12 / freelancer)
-A single `employmentType` dropdown (`salaried14` / `salaried12` / `freelancer`) drives which fields and results are shown in the Salary tab, via a set of container toggles in `recomputeSalary()` rather than three separate tabs:
+### 4.13 Employment type branching (salaried 14 / salaried 12)
+A single `employmentType` dropdown (`salaried14` / `salaried12`) drives which fields and results are shown in the Salary tab, via container toggles in `recomputeSalary()`:
 ```
-salariedOnlyFields   -> gross salary, hire date, insurance category, EFKA %
-extraHoursFields     -> overwork/overtime/holiday hours, extra net (shared by
-                        both salaried modes, hidden for freelancer)
-freelancerOnlyFields -> average monthly profit, EFKA category, first-year checkbox
-salariedResults / freelancerResults / annualTableWrap / freelancerNote
-                     -> corresponding result panels
+salariedOnlyFields -> gross salary, hire date, insurance category, EFKA %
+extraHoursFields    -> overwork/overtime/holiday hours, extra net
 ```
-`taxCredit` and `ageBracket` are **shared** across all three modes (deliberately kept outside any mode-specific wrapper) since the tax-credit and bracket-selection mechanics are identical for employees and freelancers alike (Section 4.14).
+`taxCredit` and `ageBracket` are shared, kept outside any mode-specific wrapper.
 
-**A real bug this produced:** an early version accidentally left the wrapper's closing `</div>` too far down the markup, so `taxCredit` and `ageBracket` ended up *inside* `salariedOnlyFields` and were hidden entirely in freelancer mode -- silently falling back to their default values with no way for the user to change them. The calculation wasn't numerically wrong (the hidden fields still held valid defaults, so the arithmetic worked), but the feature was still broken from the user's perspective, since age materially changes a freelancer's tax bracket. Caught by a user testing the actual UI, not by the automated test suite -- see the coverage gap noted in Section 9. The general lesson: a "shared" field must be verified to sit *outside* every mode-specific wrapper, not just declared shared in a comment; grep the actual opening/closing tag pairing rather than trusting the visual indentation.
-
-### 4.14 Freelancer / self-employed calculation (v1 scope)
-Structurally different from salaried pay: EFKA is a **fixed monthly amount per category**, not a percentage of income, and there is no 14x/12x annualization -- the annual net profit already *is* the annual taxable base (after subtracting annual EFKA, which is deductible).
-```
-annualProfit  = monthlyProfit x 12
-annualEfka    = efkaCategoryRate x 12          (fixed amount, category-selected)
-taxable       = max(annualProfit - annualEfka, 0)
-grossTax      = bracket_tax(taxable, ageBracket)     -- same brackets as Section 4.2
-usedCredit    = effectiveTaxCredit(baseCredit, taxable)  -- same mechanism as Section 4.3
-finalTax      = max(grossTax - usedCredit, 0)
-netMonthly    = monthlyProfit - efkaCategoryRate - finalTax/12
-```
-Confirmed via web search (Ministry of Labour + tax-advisory sources) that as of the 2026 tax year, self-employed profit is taxed through the **same bracket scale and the same tax-credit mechanism** as employees -- previously employees-only. This let the existing `annualTax()` and `effectiveTaxCredit()` functions be reused directly rather than needing a parallel implementation.
-
-**Renamed to "Blokaki" and switched to a gross-income input (a later revision):** the mode was renamed from "self-employed/freelancer" to "blokaki" (ΔΠΥ taxed as employee), and the input switched from *net profit* to *gross income*, since blokaki-as-employee doesn't allow business-expense deduction. A calculation-direction toggle now supports both **gross → net** (direct) and **net → gross** (the inverse has no closed form given the progressive bracket + tapering credit, so `blokakiGrossFromNet` solves it via 60 rounds of bisection — safe because net(gross) is monotonically non-decreasing).
-
-EFKA categories, corrected (fixed EUR/month, confirmed against e-EFKA circular 6/2026 and cross-checked against two independent blokaki-specific calculators): Special/new-professional EUR156.79, 1st EUR254.65, 2nd EUR303.59, 3rd EUR361.84, 4th EUR432.90, 5th EUR516.78, 6th EUR669.39. **A prior version of this table was wrong** — it only included the main-pension (κύρια σύνταξη) component and omitted healthcare (υγειονομική περίθαλψη) and the unemployment fund contribution (ΔΥΠΑ, a flat €10), understating every category by roughly €70-95/month. Caught by cross-referencing a third-party blokaki calculator against the raw government circular breakdown for one category (Special: €111.06 pension + €39.40 healthcare + €10 unemployment = €160.46, matching the calculator's €156.79 closely) before trusting either source alone.
-
-An eighth EFKA option was added: **8.72% of the gross fee**, for the common arrangement where the client/employer remits the contribution on the contractor's behalf rather than the contractor paying a fixed category amount themselves. Structurally this is just a second EFKA mode (percentage-of-income instead of fixed-per-month) plugged into the same `blokakiCalc`/`blokakiGrossFromNet` functions via an `efkaConfig` object (`{type:'fixed', amount}` or `{type:'percent', rate}`) — everything downstream (tax bracket, credit, advance payment) is unchanged.
-
-**Cross-checking against a third-party blokaki calculator surfaced two bugs — in the third-party tool, not ours.** A user-supplied real screenshot from a competing calculator (annual gross €33,316.32, 8.72% EFKA option) matched our EFKA and taxable-income figures exactly, but its income-tax figure (€6,048.01) did not match our 2026-bracket result (€5,639.79). Reconstructing their number against the **2025** (pre-reform) bracket table — 9/22/28/36/41/46% instead of 2026's 9/20/26/34/39/44% — matched to the cent, strongly suggesting the third-party tool hadn't been updated for the 2026 rate change despite marketing itself as current. Separately, the same tool's own written explanation of its final step ("profit − tax + credit") didn't reconcile with its displayed final result; the number only matched a formula that *subtracted* the credit twice, which is economically nonsensical for a credit that's supposed to reduce tax owed — a likely display/computation bug on their end, unrelated to the bracket-year issue. Both findings increased confidence in this tool's own numbers rather than casting doubt on them, since the discrepancies were each fully explainable rather than being unresolved mysteries. Full arithmetic trail in the session that produced this fix.
-
-This led to adding a **2025 vs. 2026 tax-scale comparison toggle** in the blokaki section (radio buttons, `taxYear` param threaded through `annualTax()`/`blokakiCalc()`/`blokakiGrossFromNet()`, defaulting to 2026). The 2025 **standard** bracket is the one directly confirmed by the reconciliation above; the 2025 **young25/young30** brackets are *not* independently sourced — they're extrapolated using the same "+2 percentage points to every bracket except the introductory rate" pattern that produced the confirmed standard row, and the UI shows an explicit warning to that effect whenever 2025 mode is active. The tax-credit mechanism (§4.3) is assumed unchanged between the two years — only the bracket rates are toggled — since no evidence surfaced that the credit formula itself changed.
-
-**Advance tax payment** (`prokatavoli`), a real cash-flow consideration specific to the self-employed, is calculated at the confirmed standard rates:
-```
-advanceTax = finalTax x (isFirstYear ? 0.275 : 0.55)
-```
-55% is the standard rate for individuals/sole proprietors; 27.5% (half) applies in the taxpayer's first year of activity, per a first-year checkbox in the UI. Both rates were cross-checked against several independent tax-advisory sources before being hard-coded.
-
-**Explicitly out of v1 scope** (surfaced to the user via an on-screen note, not silently ignored):
-- Presumptive/imputed minimum income ("τεκμαρτό εισόδημα") -- a separate, frequently-changing minimum-income presumption system
-- Special-category exemptions (taxi drivers, small-settlement businesses, "blokaki" contractors with <=3 clients, 80%+ disability, etc.)
-- VAT
-- Any advance-tax reduction/exemption beyond the standard first-year halving
+**A note for future reference:** a blokaki (ΔΠΥ-taxed-as-employee) mode was fully built, tested, and cross-checked against multiple sources and third-party calculators in an earlier revision, then deliberately removed at the user's request pending a rethink of its design -- not because the numbers were found to be wrong. If revisited, the earlier implementation covered: fixed and percentage-based EFKA options, a gross<->net calculation-direction toggle (net->gross solved via bisection, since the bracket+credit function has no closed-form inverse), a 2025-vs-2026 tax-scale comparison, and an informational (non-deducting) VAT line linked to an AADE reference page. A wrapper-scoping bug was also caught and fixed during that work: a "shared" field must be verified to sit *outside* every mode-specific container, not just declared shared in a comment.
 
 ### 4.15 Reusable info-icon / popover pattern
 A small `.info-icon` (a "little i" glyph) paired with a `.info-popover` (hidden by default, toggled via an `open` class) is used for supplementary explanations that don't fit inline in a label -- first introduced for the insurance-category dropdown, written generically enough to reuse anywhere else a short explanatory aside is needed.
@@ -312,7 +273,6 @@ Applied bounds: percentages capped 0-100 (interest rate, EFKA rate, savings %, i
 - No persistence — there is intentionally no save/load mechanism (removed by design once the print report existed as an alternative); each session starts from defaults.
 - Loan prepayment assumes no fees/insurance/early-repayment penalties.
 - A ~1-cent discrepancy occasionally appears in some display splits, sourced from floating-point rounding order differences versus an independent reference implementation; it does not affect final totals and has been reproduced and judged negligible.
-- Freelancer/self-employed mode (Section 4.14) is explicitly v1 scope: no presumptive/imputed income, no special-category exemptions, no VAT, and the advance-tax calculation uses only the two standard rates (55% / 27.5% first-year) with no further reductions modeled.
 - The insurance-category dropdown (Section 4.13's `salariedOnlyFields`) offers a small fixed set of categories (standard, heavy/unhealthy, underground/underwater); it isn't an exhaustive list of every EFKA sub-category, and the "adjust manually" option exists precisely because of that.
 
 ---
@@ -340,7 +300,7 @@ Repository includes an MIT `LICENSE` and a small footer signature/attribution li
 - Horizontal-overflow-free rendering at 320/375/412px, in both languages, across every tab
 - Input clamping (Section 6)
 
-**Known coverage gap:** the suite does not yet exercise the three-way employment-type branching (Section 4.13) -- the 12-salary annualization, the insurance-category auto-fill, or any part of the freelancer calculation (Section 4.14) -- since these were added after the suite was last extended. The wrapper-scoping bug described in Section 4.13 was caught by manual testing, not by this suite, which is exactly the kind of regression an automated check should catch going forward. Extending the suite to cover all three employment-type paths is the most valuable next addition to it.
+**Known coverage gap:** the suite does not yet exercise the employment-type branching (Section 4.13) -- the 12-salary annualization or the insurance-category auto-fill -- since these were added after the suite was last extended. Extending the suite to cover both employment-type paths is a worthwhile next addition to it.
 
 Run it with:
 ```
