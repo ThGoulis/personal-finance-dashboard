@@ -65,6 +65,7 @@ Two employment types, selectable from a single dropdown:
 - **Bilingual.** A single toggle switches every label, tip, and generated report between Greek and English. Currency formatting adapts to the selected language's locale.
 - **Input validation.** Numeric fields are clamped to sensible bounds (percentages capped at 100%, non-negative amounts, etc.) on blur.
 - **Printable report.** A dedicated print view summarizes the active tabs into a clean, non-interactive report.
+- **No walls of zeros.** Results that depend on data you haven't entered yet are hidden, dashed-out with a short note, or shown as a live-updating "€0.00" — whichever fits the context — rather than a page full of meaningless zeros on first visit. See TECHNICAL.md §12 for the reasoning behind each choice.
 
 ## Disclaimer
 
@@ -88,10 +89,13 @@ The repo is set up for GitHub Pages (Settings → Pages → deploy from `main` b
 
 `tests/qa_tests.py` is a Playwright-driven regression suite that opens the app in a real headless browser and checks the core calculations (loan, salary/tax, investment growth), the dashboard's card-to-tab navigation, and mobile rendering across several widths and both languages.
 
+`tests/lint_checks.py` is a separate, static check (no browser needed) for two specific bug patterns this project has hit more than once: nested `data-i18n` attributes, and a stale cache-busting version string relative to the actual file content.
+
 ```bash
 pip install playwright
 playwright install chromium
 python tests/qa_tests.py
+python tests/lint_checks.py
 ```
 
 See [TECHNICAL.md](TECHNICAL.md) for what each check covers.
