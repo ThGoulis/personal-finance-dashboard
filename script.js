@@ -1024,7 +1024,13 @@ function updateHubCards(){
     const suffix = currentLang==='en' ? '/mo' : '/μήνα';
     document.getElementById('hubLoanValue').textContent = document.getElementById('sumLoan').textContent + suffix;
     const dtiBadge = document.getElementById('dtiBadge');
-    hubLoanBadge.textContent = dtiBadge.textContent;
+    if(dtiBadge.classList.contains('over')){
+      hubLoanBadge.textContent = currentLang==='en' ? 'Above limit' : 'Πάνω από όριο';
+    } else if(dtiBadge.classList.contains('warn')){
+      hubLoanBadge.textContent = currentLang==='en' ? 'At the edge' : 'Στο όριο';
+    } else {
+      hubLoanBadge.textContent = currentLang==='en' ? 'Within limit' : 'Εντός ορίου';
+    }
     hubLoanBadge.className = 'hub-card-badge';
     if(dtiBadge.classList.contains('warn')) hubLoanBadge.classList.add('warn');
     if(dtiBadge.classList.contains('over')) hubLoanBadge.classList.add('over');
