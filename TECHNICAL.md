@@ -312,6 +312,16 @@ python tests/qa_tests.py
 ```
 Exits non-zero if any check fails, printing which one(s). Every reference value in the suite was itself cross-checked against an independent Python re-implementation of the relevant formula (or, for the salary/tax logic, a real payslip) before being hard-coded as the expected result — the point of the suite is to catch *regressions* against known-good numbers, not to (re-)establish that the numbers are correct in the first place.
 
+`tests/lint_checks.py` is a separate, purely static script (no browser needed) that catches two specific bug *patterns* this project shipped more than once, rather than checking behavior:
+1. **Nested `data-i18n` attributes** — an element with its own `data-i18n` sitting inside another `data-i18n` element gets silently destroyed the moment the outer element's `innerHTML` is reassigned by `applyStaticTranslations()`. Parses `index.html` with Python's `html.parser` (a real parser, not regex) to track element nesting and flag any such case.
+2. **Cache-version drift** — compares the current MD5 hash of `style.css`/`script.js` against the hash recorded the last time the script ran successfully (stored in `tests/.cache_version_state.json`, isolated per checked directory via `--dir`); fails if the content changed but the `?v=` query string in `index.html` didn't, which is exactly the mistake that once shipped a broken page to returning visitors (§8).
+
+Run it with:
+```
+python tests/lint_checks.py
+```
+Run both this and `qa_tests.py` before every deploy — they catch different classes of bug. A nested-`data-i18n` bug in particular is easy for behavioral testing to miss entirely, since the *initial* render in the default language is often unaffected; it only surfaces on a language switch, and only for that one nested element.
+
 ---
 
 ## 10. Sources & Verification
