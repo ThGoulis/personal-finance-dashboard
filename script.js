@@ -1436,7 +1436,7 @@ showTab('hub');
 const EXPORT_FIELD_IDS = [
   'amount','down','installments','rate',
   'prepMonth','prepAmount',
-  'grossSalary','hireDate','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','ageBracket',
+  'employmentType','grossSalary','hireDate','ssCategory','ssRate','taxCredit','extraNet','overworkHours','holidayHours','overtimeHours','businessType','holidayDays','ageBracket',
   'motoInsurance','motoRoadTax','motoService','motoFuel','motoParking','motoOther',
   'income','fixedExpenses','vacationSaved','savingsPct',
   'invStart','invYears','invContribution','invContribFreq','invRate','invCompound'
@@ -1445,8 +1445,8 @@ const EXPORT_FIELD_IDS = [
 const DEFAULT_VALUES = {
   amount:'0', down:'0', installments:'24', rate:'10',
   prepMonth:'0', prepAmount:'0',
-  grossSalary:'1500', hireDate:'01/01/2020', ssRate:'13.37', taxCredit:'777', extraNet:'0', ageBracket:'standard',
-  overworkHours:'0', holidayHours:'0', overtimeHours:'0',
+  employmentType:'salaried14', grossSalary:'1500', hireDate:'01/01/2020', ssCategory:'13.37', ssRate:'13.37', taxCredit:'777', extraNet:'0', ageBracket:'standard',
+  overworkHours:'0', holidayHours:'0', overtimeHours:'0', businessType:'continuous', holidayDays:'0',
   motoInsurance:'0', motoRoadTax:'0', motoService:'0', motoFuel:'0', motoParking:'0', motoOther:'0',
   income:'1400', fixedExpenses:'0', vacationSaved:'0', savingsPct:'20',
   invStart:'0', invYears:'10', invContribution:'50', invContribFreq:'12', invRate:'3', invCompound:'12'
