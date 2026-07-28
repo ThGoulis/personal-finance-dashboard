@@ -232,7 +232,7 @@ h1{
 }
 .info-popover.open{ display:block; }
 .field .row{ display:flex; align-items:center; gap:10px; }
-input[type=number], input[type=range]{
+input[type=number], input[type=range], #fixedExpenses{
   width:100%;
 }
 input.date-input{
@@ -286,7 +286,7 @@ select.date-input:focus{ outline:2px solid var(--teal); outline-offset:1px; }
   border:none;
   padding:0;
 }
-input[type=number]{
+input[type=number], #fixedExpenses{
   font-family:'IBM Plex Mono', monospace;
   font-size:15px;
   padding:9px 10px;
@@ -295,7 +295,7 @@ input[type=number]{
   background:#fff;
   color:var(--ink);
 }
-input[type=number]:focus{ outline:2px solid var(--teal); outline-offset:1px; }
+input[type=number]:focus, #fixedExpenses:focus{ outline:2px solid var(--teal); outline-offset:1px; }
 input[type=range]{
   accent-color:var(--teal);
 }
