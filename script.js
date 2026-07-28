@@ -140,6 +140,7 @@ const TRANSLATIONS = {
   "lbl18": "Μηνιαίο καθαρό εισόδημα <span style=\"font-weight:400;\">(συμπληρώνεται αυτόματα από τον καθαρό μηνιαίο μισθό — μπορείτε να το αλλάξετε)</span>",
   "unit112": "€",
   "lbl19": "Λοιπά σταθερά μηνιαία έξοδα <span style=\"font-weight:400;\">(ενοίκιο, λογαριασμοί, λοιπά δάνεια κ.λπ.)</span>",
+  "fixedExpensesHint": "Μπορείς να γράψεις πράξη, π.χ. 450+120+300",
   "unit113": "€",
   "reslbl78": "Δόση δανείου",
   "reslbl79": "Πάγια έξοδα οχήματος (ισοδύναμο/μήνα)",
@@ -349,6 +350,7 @@ const TRANSLATIONS = {
   "lbl18": "Net Monthly Income <span style=\"font-weight:400;\">(auto-filled from net monthly salary -- you can change it)</span>",
   "unit112": "€",
   "lbl19": "Other Fixed Monthly Expenses <span style=\"font-weight:400;\">(rent, bills, other loans, etc.)</span>",
+  "fixedExpensesHint": "You can type an expression, e.g. 450+120+300",
   "unit113": "€",
   "reslbl78": "Loan Payment",
   "reslbl79": "Fixed Vehicle Expenses (monthly equiv.)",
@@ -1624,7 +1626,7 @@ const FIELD_BOUNDS = {
   extraNet: {min:0},
   motoInsurance: {min:0}, motoRoadTax: {min:0}, motoService: {min:0},
   motoFuel: {min:0}, motoParking: {min:0}, motoOther: {min:0},
-  income: {min:0}, fixedExpenses: {min:0}, savingsPct: {min:0, max:100}, vacationSaved: {min:0},
+  income: {min:0}, savingsPct: {min:0, max:100}, vacationSaved: {min:0},
   invStart: {min:0}, invYears: {min:1, max:100}, invContribution: {min:0}, invRate: {min:0, max:100}
 };
 
@@ -1644,6 +1646,80 @@ Object.keys(FIELD_BOUNDS).forEach(id=>{
     }
   });
 });
+
+// Simple, deliberately narrow arithmetic evaluator for the "Other Fixed
+// Monthly Expenses" field -- lets someone type "450+120+300" instead of
+// leaving the tool to use a separate calculator. Never uses eval()/Function()
+// on the input: tokenizes into numbers and +-*/ operators, resolves * and /
+// in a first pass (so precedence is correct), then sums the remainder.
+// Returns null for anything invalid (malformed expression, division by
+// zero, empty) rather than throwing, so the caller can cleanly fall back
+// to the last known-good value.
+function evaluateArithmeticExpression(str){
+  const tokens = str.match(/\d+\.?\d*|\.\d+|[+\-*/]/g);
+  if(!tokens || tokens.length === 0) return null;
+  if(!/^[\d.]/.test(tokens[0])) return null; // must start with a number (no unary +/-)
+  const values = [parseFloat(tokens[0])];
+  const ops = [];
+  for(let i=1; i<tokens.length; i+=2){
+    const op = tokens[i];
+    const numTok = tokens[i+1];
+    if(!['+','-','*','/'].includes(op) || numTok===undefined || !/^[\d.]/.test(numTok)) return null;
+    const num = parseFloat(numTok);
+    if(isNaN(num)) return null;
+    if(op==='*'){ values[values.length-1] *= num; }
+    else if(op==='/'){ if(num===0) return null; values[values.length-1] /= num; }
+    else { values.push(op==='-' ? -num : num); ops.push('+'); }
+  }
+  const result = values.reduce((a,b)=>a+b, 0);
+  return isFinite(result) ? result : null;
+}
+
+(function setupExpressionField(){
+  const field = document.getElementById('fixedExpenses');
+  if(!field) return;
+
+  // Real-time filter: only digits, one decimal point, and +-*/ ever land in
+  // the field -- anything else (letters, symbols) is silently dropped as it's
+  // typed, rather than typed then rejected afterwards.
+  field.addEventListener('input', function(){
+    const filtered = this.value.replace(/[^0-9.+\-*/]/g, '');
+    if(filtered !== this.value) this.value = filtered;
+  });
+
+  function resolveExpression(){
+    const raw = field.value.trim();
+    const lastValid = parseFloat(field.dataset.lastvalid)||0;
+    if(raw === ''){
+      field.value = 0;
+      field.dataset.lastvalid = '0';
+      field.dispatchEvent(new Event('input'));
+      return;
+    }
+    let result = evaluateArithmeticExpression(raw);
+    if(result === null){
+      // Invalid/incomplete expression (e.g. division by zero, trailing
+      // operator) -- silently fall back to the last value that worked,
+      // same pattern as the numeric-field blur clamp above.
+      field.value = lastValid;
+    } else {
+      if(result < 0) result = 0;
+      result = Math.round(result*100)/100;
+      field.value = result;
+      field.dataset.lastvalid = String(result);
+    }
+    field.dispatchEvent(new Event('input'));
+  }
+
+  field.addEventListener('blur', resolveExpression);
+  field.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      resolveExpression();
+      field.blur();
+    }
+  });
+})();
 
 
 // --- Intro card dismissal ---

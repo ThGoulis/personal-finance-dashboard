@@ -41,6 +41,7 @@ Two employment types, selectable from a single dropdown:
 
 ### Budget
 - Personal monthly budget: income, fixed expenses, available balance
+- The fixed-expenses field accepts a simple expression (e.g. `450+120+300`) instead of requiring a pre-summed total
 - Savings percentage suggestion, feeding automatically into the investment calculator
 - Reserve fund, fed by any bonus surplus left over after vehicle expenses — for vacations, unexpected costs, or any other goal
 
