@@ -983,6 +983,23 @@ function recomputeBudget(){
     }
   }
 
+  {
+    const budgetRatio = income > 0 ? remainNoBonus/income : (remainNoBonus < 0 ? -1 : 0);
+    if(remainNoBonus < 0 || budgetRatio < 0.10){
+      const contributors = [
+        {label: currentLang==='en' ? 'other fixed expenses' : 'τα λοιπά σταθερά έξοδα', amount: otherFixed},
+        {label: currentLang==='en' ? 'the loan payment' : 'η δόση δανείου', amount: lastMonthlyPayment},
+        {label: currentLang==='en' ? 'vehicle costs' : 'τα έξοδα οχήματος', amount: lastPureVehicleCost}
+      ];
+      const biggest = contributors.reduce((a,b) => b.amount>a.amount ? b : a);
+      if(biggest.amount > 0){
+        tips.push(currentLang==='en'
+          ? `The biggest factor here is ${biggest.label} (${euroDec(biggest.amount)}/month) \u2014 that's the first place worth reviewing.`
+          : `Ο μεγαλύτερος παράγοντας εδώ είναι ${biggest.label} (${euroDec(biggest.amount)}/μήνα) — αυτό αξίζει να κοιτάξεις πρώτα.`);
+      }
+    }
+  }
+
   document.getElementById('budgetTips').innerHTML = tips.map(t=>
     t.includes('<br>')
       ? `<div class="tip-item"><span>${t}</span></div>`
