@@ -529,21 +529,43 @@ function renderLedger(schedule){
 }
 
 function recompute(){
-  const {amount, principal, months, r} = getInputs();
+  const {amount, down, principal, months, r} = getInputs();
   const M = monthlyPayment(principal, r, months);
   const schedule = buildSchedule(principal, r, months, M);
   const totalInterest = schedule.reduce((s,row)=>s+row.interest,0);
   const totalPaid = totalInterest + principal;
 
   const hasAmount = amount > 0;
-  document.getElementById('loanEmptyNote').style.display = hasAmount ? 'none' : 'block';
-  document.getElementById('loanResultsGrid').style.opacity = hasAmount ? '1' : '0.5';
+  const hasPrincipal = principal > 0;
+  const emptyNote = document.getElementById('loanEmptyNote');
+  if(!hasAmount){
+    emptyNote.style.display = 'block';
+    emptyNote.textContent = currentLang==='en' ? 'You haven\u2019t entered a loan amount yet.' : 'Δεν έχεις συμπληρώσει ακόμα ποσό δανείου.';
+  } else if(!hasPrincipal){
+    emptyNote.style.display = 'block';
+    emptyNote.textContent = currentLang==='en'
+      ? 'The down payment is greater than or equal to the loan amount \u2014 there\u2019s nothing left to finance.'
+      : 'Η προκαταβολή είναι μεγαλύτερη ή ίση από το ποσό δανείου — δεν μένει τίποτα προς χρηματοδότηση.';
+  } else {
+    emptyNote.style.display = 'none';
+  }
+  document.getElementById('loanResultsGrid').style.opacity = hasPrincipal ? '1' : '0.5';
 
-  document.getElementById('rMonthly').textContent = hasAmount ? euroDec(M) : '—';
-  document.getElementById('rPrincipal').textContent = hasAmount ? euro(principal) : '—';
-  document.getElementById('rInterest').textContent = hasAmount ? euro(totalInterest) : '—';
-  document.getElementById('rTotal').textContent = hasAmount ? euro(totalPaid) : '—';
-  document.getElementById('rMonths').textContent = hasAmount ? (schedule.length + (currentLang==='en' ? ' installments' : ' δόσεις')) : '—';
+  document.getElementById('rMonthly').textContent = hasPrincipal ? euroDec(M) : '—';
+  document.getElementById('rPrincipal').textContent = hasPrincipal ? euro(principal) : '—';
+  document.getElementById('rInterest').textContent = hasPrincipal ? euro(totalInterest) : '—';
+  document.getElementById('rTotal').textContent = hasPrincipal ? euro(totalPaid) : '—';
+  document.getElementById('rMonths').textContent = hasPrincipal ? (schedule.length + (currentLang==='en' ? ' installments' : ' δόσεις')) : '—';
+
+  // The prepayment month can never meaningfully exceed the loan's own term --
+  // keep the field's max (and, if needed, its current value) in sync with the
+  // current installment count, rather than silently clamping only inside the
+  // calculation while the field itself keeps showing an out-of-range number.
+  const prepMonthField = document.getElementById('prepMonth');
+  prepMonthField.max = months;
+  if((parseInt(prepMonthField.value)||0) > months){
+    prepMonthField.value = months;
+  }
 
   renderLedger(schedule);
   currentSchedule = schedule;
@@ -691,8 +713,8 @@ function computePrepayment(){
   if(prepMode === 'shorten'){
     // keep M fixed, iterate until balance depletes
     const sch = buildSchedule(newBalance, r, 100000, M); // large cap, will stop when balance<=0
-    afterMonthly = M;
     afterMonthsCount = sch.length;
+    afterMonthly = afterMonthsCount > 0 ? M : 0; // fully paid off by the prepayment itself -> nothing left to pay
     afterInterest = sch.reduce((s,row)=>s+row.interest,0);
   } else {
     // keep remaining months fixed, recompute installment
@@ -729,7 +751,7 @@ function computePrepayment(){
 
 document.getElementById('computeBtn').addEventListener('click', computePrepayment);
 
-['amount','down','installments','rate'].forEach(id=>{
+['amount','down','installments','rate','prepMonth'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recompute);
 });
 
@@ -1598,7 +1620,7 @@ const FIELD_BOUNDS = {
   amount: {min:0}, down: {min:0}, installments: {min:1, max:600}, rate: {min:0, max:100},
   prepMonth: {min:1}, prepAmount: {min:0},
   grossSalary: {min:0}, ssRate: {min:0, max:100}, taxCredit: {min:0},
-  overworkHours: {min:0, max:300}, holidayHours: {min:0, max:300}, overtimeHours: {min:0, max:300},
+  overworkHours: {min:0, max:300}, holidayHours: {min:0, max:300}, overtimeHours: {min:0, max:300}, holidayDays: {min:0, max:8},
   extraNet: {min:0},
   motoInsurance: {min:0}, motoRoadTax: {min:0}, motoService: {min:0},
   motoFuel: {min:0}, motoParking: {min:0}, motoOther: {min:0},
